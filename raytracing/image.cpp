@@ -52,10 +52,10 @@ void image::save_to_ppm(const std::string& filename) {
 		for (unsigned int col = 0; col < width; col++) {
 			unsigned int index = width * row + col;
 			rgb_color& pixel = pixels[index];
-			int ir = static_cast<int>(255.999 * pixel.r);
-			int ig = static_cast<int>(255.999 * pixel.g);
-			int ib = static_cast<int>(255.999 * pixel.b);
-			outFile << ir << ' ' << ig << ' ' << ib << ' ';
+			uint8_t r = pixel.get_r_u8();
+			uint8_t g = pixel.get_g_u8();
+			uint8_t b = pixel.get_b_u8();
+			outFile << (unsigned int)r << ' ' << (unsigned int)g << ' ' << (unsigned int)b << ' ';
 		}
 		outFile << '\n';
 	}

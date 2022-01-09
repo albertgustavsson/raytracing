@@ -1,9 +1,13 @@
 #pragma once
+#include <cstdint>
 class rgb_color
 {
 public:
 	rgb_color();
 	rgb_color(float r, float g, float b);
+	uint8_t get_r_u8();
+	uint8_t get_g_u8();
+	uint8_t get_b_u8();
 public:
 	float r;
 	float g;
