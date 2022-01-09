@@ -6,13 +6,13 @@ rgb_color::rgb_color(float r, float g, float b) : r(r), g(g), b(b) {}
 
 
 uint8_t rgb_color::get_r_u8() {
-	return static_cast<uint8_t>(round(r * 255.0));
+	return static_cast<uint8_t>(fmin(255.0, r * 256.0));
 }
 uint8_t rgb_color::get_g_u8() {
-	return static_cast<uint8_t>(round(g * 255.0));
+	return static_cast<uint8_t>(fmin(255.0, g * 256.0));
 }
 uint8_t rgb_color::get_b_u8() {
-	return static_cast<uint8_t>(round(b * 255.0));
+	return static_cast<uint8_t>(fmin(255.0, b * 256.0));
 }
 
 rgb_color operator+(const rgb_color& c, const rgb_color& d) {
