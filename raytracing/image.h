@@ -1,6 +1,5 @@
 #pragma once
-#include <ostream>
-#include"rgb_color.h"
+#include"color.h"
 
 class image
 {

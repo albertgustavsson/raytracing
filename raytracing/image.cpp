@@ -2,7 +2,7 @@
 #include <string>
 #include <fstream>
 #include "image.h"
-#include "rgb_color.h"
+#include "color.h"
 
 /* Image class
 * Represents an Image. Functions for reading and writing image files.
@@ -52,9 +52,9 @@ void image::save_to_ppm(const std::string& filename) {
 		for (unsigned int col = 0; col < width; col++) {
 			unsigned int index = width * row + col;
 			rgb_color& pixel = pixels[index];
-			int ir = static_cast<int>(255.999 * pixel.red);
-			int ig = static_cast<int>(255.999 * pixel.green);
-			int ib = static_cast<int>(255.999 * pixel.blue);
+			int ir = static_cast<int>(255.999 * pixel.r);
+			int ig = static_cast<int>(255.999 * pixel.g);
+			int ib = static_cast<int>(255.999 * pixel.b);
 			outFile << ir << ' ' << ig << ' ' << ib << ' ';
 		}
 		outFile << '\n';

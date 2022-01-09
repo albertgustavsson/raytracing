@@ -5,9 +5,9 @@ public:
 	rgb_color();
 	rgb_color(float r, float g, float b);
 public:
-	float red;
-	float green;
-	float blue;
+	float r;
+	float g;
+	float b;
 };
 
 rgb_color operator+(const rgb_color& c, const rgb_color& d);

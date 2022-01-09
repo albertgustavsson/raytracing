@@ -141,11 +141,11 @@
   <ItemGroup>
     <ClCompile Include="image.cpp" />
     <ClCompile Include="raytracing.cpp" />
-    <ClCompile Include="rgb_color.cpp" />
+    <ClCompile Include="color.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="image.h" />
-    <ClInclude Include="rgb_color.h" />
+    <ClInclude Include="color.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
