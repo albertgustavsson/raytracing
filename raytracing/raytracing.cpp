@@ -5,9 +5,28 @@
 #include "image.h"
 #include "ray.h"
 
+float hit_sphere(const vector3& center, float radius, const ray& r) {
+	vector3 oc = r.origin - center;
+	float a = r.direction.length_squared();
+	float half_b = dot(oc, r.direction);
+	float c = oc.length_squared() - radius * radius;
+	float discriminant = half_b * half_b - a * c;
+	if (discriminant < 0) {
+		return -1.0;
+	}
+	else {
+		return (-half_b - sqrt(discriminant)) / a;
+	}
+}
+
 rgb_color ray_color(const ray& r) {
+	float t = hit_sphere(vector3(0, 0, -1), 0.5, r);
+	if (t > 0.0) {
+		vector3 N = normalize(r.at(t) - vector3(0, 0, -1));
+		return 0.5 * rgb_color(N.x + 1, N.y + 1, N.z + 1);
+	}
 	vector3 unit_direction = normalize(r.direction);
-	float t = 0.5 * (unit_direction.y + 1.0);
+	t = 0.5 * (unit_direction.y + 1.0);
 	return (1.0 - t) * rgb_color(1.0, 1.0, 1.0) + t * rgb_color(0.5, 0.7, 1.0);
 }
 
@@ -38,6 +57,7 @@ int main()
 			rgb_color pixel_color = ray_color(r);
 			unsigned int index = img.width * row + col;
 			img.pixels[index] = pixel_color;
+
 		}
 	}
 	std::cout << std::endl;
