@@ -1,41 +1,36 @@
-// raytracing.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
-
 #include <iostream>
 #include "image.h"
+#include "color.h"
 #include "ray.h"
+#include "hittable_list.h"
+#include "sphere.h"
 
-float hit_sphere(const vector3& center, float radius, const ray& r) {
-	vector3 oc = r.origin - center;
-	float a = r.direction.length_squared();
-	float half_b = dot(oc, r.direction);
-	float c = oc.length_squared() - radius * radius;
-	float discriminant = half_b * half_b - a * c;
-	if (discriminant < 0) {
-		return -1.0;
-	}
-	else {
-		return (-half_b - sqrt(discriminant)) / a;
-	}
-}
+const double infinity = std::numeric_limits<double>::infinity();
+const double pi = 3.1415926535897932385;
 
-rgb_color ray_color(const ray& r) {
-	float t = hit_sphere(vector3(0, 0, -1), 0.5, r);
-	if (t > 0.0) {
-		vector3 N = normalize(r.at(t) - vector3(0, 0, -1));
-		return 0.5 * rgb_color(N.x + 1, N.y + 1, N.z + 1);
+rgb_color ray_color(const ray& r, const hittable& world) {
+	hit_record rec;
+	if (world.hit(r, 0, infinity, rec)) {
+		return 0.5 * (rgb_color(rec.normal.x, rec.normal.y, rec.normal.z) + rgb_color(1, 1, 1));
 	}
 	vector3 unit_direction = normalize(r.direction);
-	t = 0.5 * (unit_direction.y + 1.0);
+	float t = 0.5 * (unit_direction.y + 1.0);
 	return (1.0 - t) * rgb_color(1.0, 1.0, 1.0) + t * rgb_color(0.5, 0.7, 1.0);
 }
 
 int main()
 {
+	// Image
 	const float aspect_ratio = 16.0f / 9.0f;
 	const unsigned int image_width = 400;
 	const unsigned int image_height = (unsigned int)((float)image_width / aspect_ratio);
 
+	// World
+	hittable_list world;
+	world.add(std::make_shared<sphere>(vector3(0, 0, -1), 0.5));
+	world.add(std::make_shared<sphere>(vector3(0, -100.5, -1), 100));
+
+	// Camera
 	float viewport_height = 2.0;
 	float viewport_width = aspect_ratio * viewport_height;
 	float focal_length = 1.0;
@@ -54,7 +49,7 @@ int main()
 			float u = (float)col / (image_width - 1);
 			float v = (float)(image_height - 1 - row) / (image_height - 1);
 			ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-			rgb_color pixel_color = ray_color(r);
+			rgb_color pixel_color = ray_color(r, world);
 			unsigned int index = img.width * row + col;
 			img.pixels[index] = pixel_color;
 
