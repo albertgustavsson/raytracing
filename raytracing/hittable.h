@@ -4,7 +4,7 @@
 struct hit_record {
     vector3 p;
     vector3 normal;
-    float t;
+    double t;
     bool front_face;
 
     inline void set_face_normal(const ray& r, const vector3& outward_normal) {
@@ -15,5 +15,5 @@ struct hit_record {
 
 class hittable {
 public:
-    virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const = 0;
+    virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const = 0;
 };

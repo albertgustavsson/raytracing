@@ -5,7 +5,7 @@ class camera
 {
 public:
     camera();
-    ray get_ray(float u, float v) const;
+    ray get_ray(double u, double v) const;
 
 private:
     vector3 origin;

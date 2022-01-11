@@ -1,20 +1,21 @@
 #include "sphere.h"
 
-bool sphere::hit(const ray& r, float t_min, float t_max, hit_record& rec) const {
+bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
     vector3 oc = r.origin - center;
-    float a = r.direction.length_squared();
-    float half_b = dot(oc, r.direction);
-    float c = oc.length_squared() - radius * radius;
-
-    float discriminant = half_b * half_b - a * c;
+    double a = r.direction.length_squared();
+    double half_b = dot(oc, r.direction);
+    double c = oc.length_squared() - radius * radius;
+    
+    double discriminant = half_b * half_b - a * c;
     if (discriminant < 0) return false;
-    float sqrtd = sqrt(discriminant);
+    
+    double sqrtd = sqrt(discriminant);
 
     // Find the nearest root that lies in the acceptable range.
-    float root = (-half_b - sqrtd) / a;
-    if (root < t_min || t_max < root) {
+    double root = (-half_b - sqrtd) / a;
+    if (root < t_min || root > t_max) {
         root = (-half_b + sqrtd) / a;
-        if (root < t_min || t_max < root)
+        if (root < t_min || root > t_max)
             return false;
     }
 

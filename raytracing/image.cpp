@@ -48,7 +48,7 @@ void image::save_to_ppm(const std::string& filename) {
 	outFile.open(filename);
 	outFile << "P3\n" << width << ' ' << height << "\n255\n";
 	for (unsigned long int row = 0; row < height; row++) {
-		std::cout << "\rWriting image to file: " << (int)((float)row / (height - 1) * 100) << "%";
+		std::cout << "\rWriting image to file: " << (int)((double)row / (height - 1) * 100) << "%";
 		for (unsigned long int col = 0; col < width; col++) {
 			unsigned long int index = width * row + col;
 			rgb_color& pixel = pixels[index];

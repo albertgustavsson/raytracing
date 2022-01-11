@@ -4,7 +4,7 @@
 #include "utils.h"
 
 vector3::vector3() : x(0.0), y(0.0), z(0.0) {}
-vector3::vector3(float x, float y, float z) : x(x), y(y), z(z) {}
+vector3::vector3(double x, double y, double z) : x(x), y(y), z(z) {}
 
 vector3 vector3::operator-() const {
     return vector3(-x, -y, -z);
@@ -21,14 +21,14 @@ vector3& vector3::operator-=(const vector3& v) {
     return *this += (-v);
 }
 
-vector3& vector3::operator*=(const float t) {
+vector3& vector3::operator*=(const double t) {
     x *= t;
     y *= t;
     z *= t;
     return *this;
 }
 
-vector3& vector3::operator/=(const float t) {
+vector3& vector3::operator/=(const double t) {
     return *this *= 1 / t;
 }
 
@@ -36,11 +36,11 @@ void vector3::normalize() {
     *this /= length();
 }
 
-float vector3::length() const {
+double vector3::length() const {
     return sqrt(length_squared());
 }
 
-float vector3::length_squared() const {
+double vector3::length_squared() const {
     return x * x + y * y + z * z;
 }
 
@@ -61,15 +61,15 @@ vector3 operator*(const vector3& u, const vector3& v) {
     return vector3(u.x * v.x, u.y * v.y, u.z * v.z);
 }
 
-vector3 operator*(const vector3& v, const float t) {
+vector3 operator*(const vector3& v, const double t) {
     return vector3(v.x * t, v.y * t, v.z * t);
 }
 
-vector3 operator*(const float t, const vector3& v) {
+vector3 operator*(const double t, const vector3& v) {
     return v * t;
 }
 
-vector3 operator/(const vector3& v, const float t) {
+vector3 operator/(const vector3& v, const double t) {
     return v * (1 / t);
 }
 
@@ -77,7 +77,7 @@ vector3 normalize(const vector3& v) {
     return v / v.length();
 }
 
-float dot(const vector3& u, const vector3& v) {
+double dot(const vector3& u, const vector3& v) {
     return u.x * v.x + u.y * v.y + u.z * v.z;
 }
 

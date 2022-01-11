@@ -4,20 +4,20 @@
 #include "vector3.h"
 #include "ray.h"
 
-const float infinity = std::numeric_limits<float>::infinity();
-const float pi = 3.1415926535897932385;
+const double infinity = std::numeric_limits<double>::infinity();
+const double pi = 3.1415926535897932385;
 
-inline float degrees_to_radians(float degrees) {
+inline double degrees_to_radians(double degrees) {
 	return degrees * pi / 180.0;
 }
 
-inline float random_float() {
-	static std::uniform_real_distribution<float> distribution(0.0, 1.0);
+inline double random_float() {
+	static std::uniform_real_distribution<double> distribution(0.0, 1.0);
 	static std::mt19937 generator;
 	return distribution(generator);
 }
 
-inline float random_float(float min, float max) {
+inline double random_float(double min, double max) {
 	// Returns a random real in [min,max).
 	return min + (max - min) * random_float();
 }
