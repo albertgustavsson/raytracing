@@ -6,7 +6,7 @@ class vector3
 public:
     vector3();
     vector3(float x, float y, float z);
-
+    
     vector3 operator-() const;
     vector3& operator+=(const vector3& v);
     vector3& operator-=(const vector3& v);

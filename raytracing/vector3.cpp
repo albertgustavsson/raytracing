@@ -1,6 +1,7 @@
 #include <ostream>
 #include <cmath>
 #include "vector3.h"
+#include "utils.h"
 
 vector3::vector3() : x(0.0), y(0.0), z(0.0) {}
 vector3::vector3(float x, float y, float z) : x(x), y(y), z(z) {}

@@ -1,5 +1,5 @@
 #pragma once
-#include "ray.h"
+#include "utils.h"
 
 struct hit_record {
     vector3 p;

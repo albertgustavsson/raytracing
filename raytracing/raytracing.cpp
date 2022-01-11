@@ -1,12 +1,10 @@
 #include <iostream>
 #include "image.h"
 #include "color.h"
-#include "ray.h"
 #include "hittable_list.h"
 #include "sphere.h"
-
-const double infinity = std::numeric_limits<double>::infinity();
-const double pi = 3.1415926535897932385;
+#include "utils.h"
+#include "camera.h"
 
 rgb_color ray_color(const ray& r, const hittable& world) {
 	hit_record rec;
@@ -22,8 +20,9 @@ int main()
 {
 	// Image
 	const float aspect_ratio = 16.0f / 9.0f;
-	const unsigned int image_width = 400;
+	const unsigned int image_width = 100;
 	const unsigned int image_height = (unsigned int)((float)image_width / aspect_ratio);
+	const unsigned int samples_per_pixel = 50;
 
 	// World
 	hittable_list world;
@@ -31,27 +30,24 @@ int main()
 	world.add(std::make_shared<sphere>(vector3(0, -100.5, -1), 100));
 
 	// Camera
-	float viewport_height = 2.0;
-	float viewport_width = aspect_ratio * viewport_height;
-	float focal_length = 1.0;
-
-	vector3 origin = vector3(0, 0, 0);
-	vector3 horizontal = vector3(viewport_width, 0, 0);
-	vector3 vertical = vector3(0, viewport_height, 0);
-	vector3 lower_left_corner = origin - horizontal / 2 - vertical / 2 - vector3(0, 0, focal_length);
+	camera cam;
 
 	std::cout << "Creating image (" << image_width << "x" << image_height << ")" << std::endl;
 	image img(image_width, image_height);
 
-	for (unsigned int row = 0; row < img.height; row++) {
+	for (unsigned long int row = 0; row < img.height; row++) {
 		std::cout << "\rGenerating image: " << (int)((float)row / (img.height - 1) * 100) << "%";
-		for (unsigned int col = 0; col < img.width; col++) {
-			float u = (float)col / (image_width - 1);
-			float v = (float)(image_height - 1 - row) / (image_height - 1);
-			ray r(origin, lower_left_corner + u * horizontal + v * vertical - origin);
-			rgb_color pixel_color = ray_color(r, world);
-			unsigned int index = img.width * row + col;
-			img.pixels[index] = pixel_color;
+		for (unsigned long int col = 0; col < img.width; col++) {
+			rgb_color pixel_color = rgb_color(0, 0, 0);
+			for (unsigned int s = 0; s < samples_per_pixel; ++s) {
+				float u = (col + random_float()) / (image_width - 1);
+				float v = (image_height - 1 - row + random_float()) / (image_height - 1);
+				ray r = cam.get_ray(u, v);
+				pixel_color += ray_color(r, world);
+			}
+			
+			unsigned long int index = img.width * row + col;
+			img.pixels[index] = pixel_color / samples_per_pixel;
 
 		}
 	}

@@ -12,14 +12,14 @@
 image::image() : width(0), height(0), pixels(nullptr) {}
 
 /* Constructor for Image */
-image::image(unsigned int w, unsigned int h) : width(w), height(h) {
+image::image(unsigned long int w, unsigned long int h) : width(w), height(h) {
 	pixels = new rgb_color[w * h];
 }
 
 /* Copy constructor for Image */
 image::image(const image& other) : width(other.width), height(other.height) {
 	pixels = new rgb_color[width * height];
-	std::copy(other.pixels, other.pixels + width * height, pixels);
+	std::copy(other.pixels, other.pixels + (width * height), pixels);
 }
 
 /* Move constructor for Image */
@@ -47,10 +47,10 @@ void image::save_to_ppm(const std::string& filename) {
 	std::ofstream outFile;
 	outFile.open(filename);
 	outFile << "P3\n" << width << ' ' << height << "\n255\n";
-	for (unsigned int row = 0; row < height; row++) {
+	for (unsigned long int row = 0; row < height; row++) {
 		std::cout << "\rWriting image to file: " << (int)((float)row / (height - 1) * 100) << "%";
-		for (unsigned int col = 0; col < width; col++) {
-			unsigned int index = width * row + col;
+		for (unsigned long int col = 0; col < width; col++) {
+			unsigned long int index = width * row + col;
 			rgb_color& pixel = pixels[index];
 			uint8_t r = pixel.get_r_u8();
 			uint8_t g = pixel.get_g_u8();

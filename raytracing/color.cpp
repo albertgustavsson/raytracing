@@ -15,6 +15,11 @@ uint8_t rgb_color::get_b_u8() {
 	return static_cast<uint8_t>(fmin(255.0, b * 256.0));
 }
 
+rgb_color& rgb_color::operator+=(const rgb_color& c)
+{
+	return *this = *this + c;
+}
+
 rgb_color operator+(const rgb_color& c, const rgb_color& d) {
 	return rgb_color(c.r + d.r, c.g + d.g, c.b + d.b);
 }
@@ -25,4 +30,12 @@ rgb_color operator*(const rgb_color& c, const float t) {
 
 rgb_color operator*(const float t, const rgb_color& c) {
 	return c * t;
+}
+
+rgb_color operator/(const rgb_color& c, const float t) {
+	return rgb_color(c.r / t, c.g / t, c.b / t);
+}
+
+rgb_color operator/(const float t, const rgb_color& c) {
+	return c / t;
 }
