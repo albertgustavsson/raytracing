@@ -6,6 +6,28 @@
 vector3::vector3() : x(0.0), y(0.0), z(0.0) {}
 vector3::vector3(double x, double y, double z) : x(x), y(y), z(z) {}
 
+inline vector3 vector3::random()
+{
+    return vector3(random_double(), random_double(), random_double());
+}
+
+inline vector3 vector3::random(double min, double max)
+{
+    return vector3(random_double(min, max), random_double(min, max), random_double(min, max));
+}
+
+vector3 vector3::random_in_unit_sphere() {
+    while (true) {
+        vector3 p = vector3::random(-1, 1);
+        if (p.length_squared() >= 1) continue;
+        return p;
+    }
+}
+
+vector3 vector3::random_unit_vector() {
+    return random_in_unit_sphere().get_normalized();
+}
+
 vector3 vector3::operator-() const {
     return vector3(-x, -y, -z);
 }
@@ -30,6 +52,12 @@ vector3& vector3::operator*=(const double t) {
 
 vector3& vector3::operator/=(const double t) {
     return *this *= 1 / t;
+}
+
+vector3 vector3::get_normalized() const {
+    vector3 v = *this;
+    v.normalize();
+    return v;
 }
 
 void vector3::normalize() {
@@ -71,10 +99,6 @@ vector3 operator*(const double t, const vector3& v) {
 
 vector3 operator/(const vector3& v, const double t) {
     return v * (1 / t);
-}
-
-vector3 normalize(const vector3& v) {
-    return v / v.length();
 }
 
 double dot(const vector3& u, const vector3& v) {

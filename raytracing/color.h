@@ -8,7 +8,9 @@ public:
 	uint8_t get_r_u8();
 	uint8_t get_g_u8();
 	uint8_t get_b_u8();
+	void apply_gamma_correction(const double gamma);
 	rgb_color& operator+=(const rgb_color& c);
+	rgb_color& operator/=(const double t);
 public:
 	double r, g, b;
 };

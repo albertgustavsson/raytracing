@@ -15,9 +15,21 @@ uint8_t rgb_color::get_b_u8() {
 	return static_cast<uint8_t>(fmin(255.0, b * 256.0));
 }
 
+void rgb_color::apply_gamma_correction(const double gamma)
+{
+	r = pow(r, 1.0 / gamma);
+	g = pow(g, 1.0 / gamma);
+	b = pow(b, 1.0 / gamma);
+}
+
 rgb_color& rgb_color::operator+=(const rgb_color& c)
 {
 	return *this = *this + c;
+}
+
+rgb_color& rgb_color::operator/=(const double t)
+{
+	return *this = *this / t;
 }
 
 rgb_color operator+(const rgb_color& c, const rgb_color& d) {
