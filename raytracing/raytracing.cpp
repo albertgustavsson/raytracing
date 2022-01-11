@@ -17,7 +17,7 @@ rgb_color ray_color(const ray& r, const hittable& world, unsigned int depth) {
 
 	hit_record rec;
 	if (world.hit(r, 0.000001, infinity, rec)) {
-		vector3 target = rec.p + rec.normal + vector3::random_unit_vector();
+		vector3 target = rec.p + vector3::random_in_hemisphere(rec.normal);
 		return 0.5 * ray_color(ray(rec.p, target - rec.p), world, depth - 1);
 	}
 	vector3 unit_direction = r.direction.get_normalized();
@@ -25,8 +25,7 @@ rgb_color ray_color(const ray& r, const hittable& world, unsigned int depth) {
 	return (1.0 - t) * white + t * background;
 }
 
-int main()
-{
+int main() {
 	// Image
 	const double aspect_ratio = 16.0 / 9.0;
 	const unsigned int image_width = 400;
@@ -61,7 +60,6 @@ int main()
 			unsigned long int row = img.height - 1 - j;
 			unsigned long int index = img.width * row + i;
 			img.pixels[index] = pixel_color;
-
 		}
 	}
 	std::cout << std::endl;

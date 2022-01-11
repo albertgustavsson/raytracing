@@ -6,13 +6,11 @@
 vector3::vector3() : x(0.0), y(0.0), z(0.0) {}
 vector3::vector3(double x, double y, double z) : x(x), y(y), z(z) {}
 
-inline vector3 vector3::random()
-{
+inline vector3 vector3::random() {
     return vector3(random_double(), random_double(), random_double());
 }
 
-inline vector3 vector3::random(double min, double max)
-{
+inline vector3 vector3::random(double min, double max) {
     return vector3(random_double(min, max), random_double(min, max), random_double(min, max));
 }
 
@@ -26,6 +24,14 @@ vector3 vector3::random_in_unit_sphere() {
 
 vector3 vector3::random_unit_vector() {
     return random_in_unit_sphere().get_normalized();
+}
+
+vector3 vector3::random_in_hemisphere(const vector3& normal) {
+    vector3 in_unit_sphere = random_in_unit_sphere();
+    if (dot(in_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
+        return in_unit_sphere;
+    else
+        return -in_unit_sphere;
 }
 
 vector3 vector3::operator-() const {
