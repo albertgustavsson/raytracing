@@ -3,7 +3,7 @@
 #include "vector3.h"
 #include "utils.h"
 
-vector3::vector3() : x(0.0), y(0.0), z(0.0) {}
+vector3::vector3() : vector3(0,0,0) {}
 vector3::vector3(double x, double y, double z) : x(x), y(y), z(z) {}
 
 inline vector3 vector3::random() {
