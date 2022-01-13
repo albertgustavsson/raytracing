@@ -1,24 +1,25 @@
 #include <cmath>
 #include "color.h"
+#include <algorithm>
 
 rgb_color::rgb_color() : r(0.0), g(0.0), b(0.0) {}
 rgb_color::rgb_color(double r, double g, double b) : r(r), g(g), b(b) {}
 
 
 uint8_t rgb_color::get_r_u8() {
-	return static_cast<uint8_t>(fmin(255.0, r * 256.0));
+	return static_cast<uint8_t>(std::clamp(r * 256.0, 0.0, 255.0));
 }
 uint8_t rgb_color::get_g_u8() {
-	return static_cast<uint8_t>(fmin(255.0, g * 256.0));
+	return static_cast<uint8_t>(std::clamp(g * 256.0, 0.0, 255.0));
 }
 uint8_t rgb_color::get_b_u8() {
-	return static_cast<uint8_t>(fmin(255.0, b * 256.0));
+	return static_cast<uint8_t>(std::clamp(b * 256.0, 0.0, 255.0));
 }
 
 void rgb_color::apply_gamma_correction(const double gamma) {
-	r = pow(r, 1.0 / gamma);
-	g = pow(g, 1.0 / gamma);
-	b = pow(b, 1.0 / gamma);
+	r = pow(r, gamma);
+	g = pow(g, gamma);
+	b = pow(b, gamma);
 }
 
 rgb_color& rgb_color::operator+=(const rgb_color& c) {

@@ -55,7 +55,7 @@ int main() {
 				pixel_color += ray_color(r, world, max_depth);
 			}
 			pixel_color /= samples_per_pixel;
-			pixel_color.apply_gamma_correction(2.0);
+			pixel_color.apply_gamma_correction(1.0/2.2);
 
 			unsigned long int row = img.height - 1 - j;
 			unsigned long int index = img.width * row + i;
