@@ -34,6 +34,10 @@ rgb_color operator+(const rgb_color& c, const rgb_color& d) {
 	return rgb_color(c.r + d.r, c.g + d.g, c.b + d.b);
 }
 
+rgb_color operator*(const rgb_color& c, const rgb_color& d) {
+	return rgb_color(c.r * d.r, c.g * d.g, c.b * d.b);
+}
+
 rgb_color operator*(const rgb_color& c, const double t) {
 	return rgb_color(c.r * t, c.g * t, c.b * t);
 }

@@ -17,8 +17,11 @@ rgb_color ray_color(const ray& r, const hittable& world, unsigned int depth) {
 
 	hit_record rec;
 	if (world.hit(r, 0.000001, infinity, rec)) {
-		vector3 target = rec.p + vector3::random_in_hemisphere(rec.normal);
-		return 0.5 * ray_color(ray(rec.p, target - rec.p), world, depth - 1);
+		ray scattered;
+		rgb_color attenuation;
+		if (rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+			return attenuation * ray_color(scattered, world, depth - 1);
+		return rgb_color(0, 0, 0);
 	}
 	vector3 unit_direction = r.direction.get_normalized();
 	double t = 0.5 * (unit_direction.y + 1.0);
@@ -35,8 +38,16 @@ int main() {
 
 	// World
 	hittable_list world;
-	world.add(std::make_shared<sphere>(vector3(0, 0, -1), 0.5));
-	world.add(std::make_shared<sphere>(vector3(0, -100.5, -1), 100));
+
+	auto material_ground = std::make_shared<lambertian>(rgb_color(0.8, 0.8, 0.0));
+	auto material_center = std::make_shared<lambertian>(rgb_color(0.7, 0.3, 0.3));
+	auto material_left = std::make_shared<metal>(rgb_color(0.8, 0.8, 0.8));
+	auto material_right = std::make_shared<metal>(rgb_color(0.8, 0.6, 0.2));
+
+	world.add(std::make_shared<sphere>(vector3(0.0, -100.5, -1.0), 100.0, material_ground));
+	world.add(std::make_shared<sphere>(vector3(0.0, 0.0, -1.0), 0.5, material_center));
+	world.add(std::make_shared<sphere>(vector3(-1.0, 0.0, -1.0), 0.5, material_left));
+	world.add(std::make_shared<sphere>(vector3(1.0, 0.0, -1.0), 0.5, material_right));
 
 	// Camera
 	camera cam;
@@ -44,9 +55,9 @@ int main() {
 	std::cout << "Creating image (" << image_width << "x" << image_height << ")" << std::endl;
 	image img(image_width, image_height);
 
-	for (long int j = img.height - 1; j >= 0; --j) {
-		std::cout << "\rGenerating image: " << (int)((double)(img.height - 1 - j) / (img.height - 1) * 100) << "%";
-		for (unsigned long int i = 0; i < img.width; ++i) {
+	for (long int j = 0; j < img.height; j++) {
+		std::cout << "\rGenerating image: " << (int)((double)(j) / (img.height - 1) * 100) << "%";
+		for (unsigned long int i = 0; i < img.width; i++) {
 			rgb_color pixel_color = rgb_color(0, 0, 0);
 			for (unsigned int s = 0; s < samples_per_pixel; ++s) {
 				double u = (i + random_double()) / (img.width - 1);

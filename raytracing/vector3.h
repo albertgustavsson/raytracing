@@ -23,6 +23,7 @@ public:
     void normalize();
     double length() const;
     double length_squared() const;
+    bool near_zero() const;
 
 public:
     double x, y, z;
@@ -39,3 +40,4 @@ vector3 operator/(const vector3& v, const double t);
 
 double dot(const vector3& u, const vector3& v);
 vector3 cross(const vector3& u, const vector3& v);
+vector3 reflect(const vector3& v, const vector3& n);

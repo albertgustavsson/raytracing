@@ -1,9 +1,12 @@
 #pragma once
 #include "utils.h"
 
+class material; // Because c++ is stupid
+
 struct hit_record {
     vector3 p;
     vector3 normal;
+    std::shared_ptr<material> mat_ptr;
     double t;
     bool front_face;
 

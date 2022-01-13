@@ -78,6 +78,12 @@ double vector3::length_squared() const {
     return x * x + y * y + z * z;
 }
 
+bool vector3::near_zero() const {
+    // Return true if the vector is close to zero in all dimensions.
+    const auto s = 1e-8;
+    return (fabs(x) < s) && (fabs(y) < s) && (fabs(z) < s);
+}
+
 
 std::ostream& operator<<(std::ostream& out, const vector3& v) {
     return out << v.x << ' ' << v.y << ' ' << v.z;
@@ -116,4 +122,8 @@ vector3 cross(const vector3& u, const vector3& v) {
         u.y * v.z - u.z * v.y,
         u.z * v.x - u.x * v.z,
         u.x * v.y - u.y * v.x);
+}
+
+vector3 reflect(const vector3& v, const vector3& n) {
+    return v - 2 * dot(v, n) * n;
 }

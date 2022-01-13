@@ -16,6 +16,7 @@ public:
 };
 
 rgb_color operator+(const rgb_color& c, const rgb_color& d);
+rgb_color operator*(const rgb_color& u, const rgb_color& v);
 rgb_color operator*(const rgb_color& c, const double t);
 rgb_color operator*(const double t, const rgb_color& c);
 rgb_color operator/(const rgb_color& c, const double t);
