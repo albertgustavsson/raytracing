@@ -36,7 +36,7 @@ hittable_list random_scene() {
 
 	for (int a = -11; a < 11; a++) {
 		for (int b = -11; b < 11; b++) {
-			auto choose_mat = random_double();
+			double choose_mat = random_double();
 			vector3 center(a + 0.9 * random_double(), 0.2, b + 0.9 * random_double());
 
 			if ((center - vector3(4, 0.2, 0)).length() > 0.9) {
@@ -44,22 +44,20 @@ hittable_list random_scene() {
 
 				if (choose_mat < 0.8) {
 					// diffuse
-					auto albedo = rgb_color::random() * rgb_color::random();
+					rgb_color albedo = rgb_color::random() * rgb_color::random();
 					sphere_material = std::make_shared<lambertian>(albedo);
-					world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
 				}
 				else if (choose_mat < 0.95) {
 					// metal
-					auto albedo = rgb_color::random(0.5, 1);
-					auto fuzz = random_double(0, 0.5);
+					rgb_color albedo = rgb_color::random(0.5, 1);
+					double fuzz = random_double(0, 0.5);
 					sphere_material = std::make_shared<metal>(albedo, fuzz);
-					world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
 				}
 				else {
 					// glass
 					sphere_material = std::make_shared<dielectric>(1.5);
-					world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
 				}
+				world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
 			}
 		}
 	}
