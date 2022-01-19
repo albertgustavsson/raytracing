@@ -1,4 +1,6 @@
 #include <iostream>
+#include <thread>
+#include <future>
 #include "image.h"
 #include "color.h"
 #include "hittable_list.h"
@@ -9,8 +11,8 @@
 rgb_color ray_color(const ray& r, const hittable& world, unsigned int depth) {
 	// If we've exceeded the ray bounce limit, no more light is gathered.
 	const rgb_color black(0.0, 0.0, 0.0);
-	const rgb_color white(1.0, 1.0, 1.0);
-	const rgb_color background(0.5, 0.7, 1.0);
+	const rgb_color background1(1.0, 1.0, 1.0);
+	const rgb_color background2(0.5, 0.7, 1.0);
 
 	if (depth <= 0)
 		return black;
@@ -25,14 +27,14 @@ rgb_color ray_color(const ray& r, const hittable& world, unsigned int depth) {
 	}
 	vector3 unit_direction = r.direction.get_normalized();
 	double t = 0.5 * (unit_direction.y + 1.0);
-	return (1.0 - t) * white + t * background;
+	return (1.0 - t) * background1 + t * background2;
 }
 
 hittable_list random_scene() {
-	hittable_list world;
+	hittable_list scene;
 
 	auto ground_material = std::make_shared<lambertian>(rgb_color(0.5, 0.5, 0.5));
-	world.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, ground_material));
+	scene.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, ground_material));
 
 	for (int a = -11; a < 11; a++) {
 		for (int b = -11; b < 11; b++) {
@@ -57,45 +59,41 @@ hittable_list random_scene() {
 					// glass
 					sphere_material = std::make_shared<dielectric>(1.5);
 				}
-				world.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+				scene.add(std::make_shared<sphere>(center, 0.2, sphere_material));
 			}
 		}
 	}
 
 	auto material1 = std::make_shared<dielectric>(1.5);
-	world.add(std::make_shared<sphere>(vector3(0, 1, 0), 1.0, material1));
+	scene.add(std::make_shared<sphere>(vector3(0, 1, 0), 1.0, material1));
 
 	auto material2 = std::make_shared<lambertian>(rgb_color(0.4, 0.2, 0.1));
-	world.add(std::make_shared<sphere>(vector3(-4, 1, 0), 1.0, material2));
+	scene.add(std::make_shared<sphere>(vector3(-4, 1, 0), 1.0, material2));
 
 	auto material3 = std::make_shared<metal>(rgb_color(0.7, 0.6, 0.5), 0.0);
-	world.add(std::make_shared<sphere>(vector3(4, 1, 0), 1.0, material3));
+	scene.add(std::make_shared<sphere>(vector3(4, 1, 0), 1.0, material3));
 
-	return world;
+	return scene;
 }
 
-int main() {
+image render_image(const hittable_list& scene) {
 	// Image
 	const double aspect_ratio = 3.0 / 2.0;
-	const unsigned int image_width = 1200;
+	const unsigned int image_width = 600;
 	const unsigned int image_height = (unsigned int)((double)image_width / aspect_ratio);
-	const unsigned int samples_per_pixel = 500;
+	const unsigned int samples_per_pixel = 50;
 	const unsigned int max_depth = 50;
 
-	// World
-	hittable_list world = random_scene();
+	image img(image_width, image_height);
 
 	// Camera
 	vector3 lookfrom(13, 2, 3);
 	vector3 lookat(0, 0, 0);
 	vector3 vup(0, 1, 0);
-	auto dist_to_focus = 10.0;//(lookfrom - lookat).length();
-	auto aperture = 0.1;
-	
-	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
+	double dist_to_focus = 10.0;
+	double aperture = 0.02;
 
-	std::cout << "Creating image (" << image_width << "x" << image_height << ")" << std::endl;
-	image img(image_width, image_height);
+	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 
 	for (long int j = 0; j < img.height; j++) {
 		std::cout << "\rGenerating image: " << (int)((double)(j) / (img.height - 1) * 100) << "%";
@@ -105,10 +103,10 @@ int main() {
 				double u = (i + random_double()) / (img.width - 1);
 				double v = (j + random_double()) / (img.height - 1);
 				ray r = cam.get_ray(u, v);
-				pixel_color += ray_color(r, world, max_depth);
+				pixel_color += ray_color(r, scene, max_depth);
 			}
 			pixel_color /= samples_per_pixel;
-			pixel_color.apply_gamma_correction(1.0/2.2);
+			pixel_color.apply_gamma_correction(1.0 / 2.2);
 
 			unsigned long int row = img.height - 1 - j;
 			unsigned long int index = img.width * row + i;
@@ -116,5 +114,14 @@ int main() {
 		}
 	}
 	std::cout << std::endl;
+
+	return img;
+}
+
+int main() {
+	hittable_list scene = random_scene();
+
+	image img = render_image(scene);
+
 	img.save_to_file("image.ppm");
 }
