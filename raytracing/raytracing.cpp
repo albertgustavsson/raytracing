@@ -33,7 +33,7 @@ int main() {
 	const double aspect_ratio = 16.0 / 9.0;
 	const unsigned int image_width = 400;
 	const unsigned int image_height = (unsigned int)((double)image_width / aspect_ratio);
-	const unsigned int samples_per_pixel = 50;
+	const unsigned int samples_per_pixel = 100;
 	const unsigned int max_depth = 10;
 
 	// World
@@ -44,14 +44,15 @@ int main() {
 	auto material_left   = std::make_shared<dielectric>(1.5);
 	auto material_right  = std::make_shared<metal>(rgb_color(0.8, 0.6, 0.2), 0.0);
 
-	world.add(std::make_shared<sphere>(vector3( 0.0, -100.5, -1.0), 100.0, material_ground));
-	world.add(std::make_shared<sphere>(vector3( 0.0,    0.0, -1.0),   0.5, material_center));
-	world.add(std::make_shared<sphere>(vector3(-1.0,    0.0, -1.0),   0.5, material_left));
-	world.add(std::make_shared<sphere>(vector3(-1.0,    0.0, -1.0),  -0.4, material_left));
-	world.add(std::make_shared<sphere>(vector3( 1.0,    0.0, -1.0),   0.5, material_right));
+	world.add(std::make_shared<sphere>(vector3( 0.0, -100.5, -1.0), 100.0 , material_ground));
+	world.add(std::make_shared<sphere>(vector3( 0.0,    0.0, -1.0),   0.5 , material_center));
+	world.add(std::make_shared<sphere>(vector3(-1.0,    0.0, -1.0),   0.5 , material_left));
+	world.add(std::make_shared<sphere>(vector3(-1.0,    0.0, -1.0),  -0.45, material_left));
+	world.add(std::make_shared<sphere>(vector3( 1.0,    0.0, -1.0),   0.5 , material_right));
 
 	// Camera
-	camera cam;
+	//camera cam(vector3(0,0,0), vector3(0, 0, -1), vector3(0, 1, 0), 90.0, aspect_ratio);
+	camera cam(vector3(-2,2,1), vector3(0, 0, -1), vector3(0, 1, 0), 20, aspect_ratio);
 
 	std::cout << "Creating image (" << image_width << "x" << image_height << ")" << std::endl;
 	image img(image_width, image_height);

@@ -4,8 +4,8 @@
 class camera
 {
 public:
-    camera();
-    ray get_ray(double u, double v) const;
+    camera(vector3 lookfrom, vector3 lookat, vector3 vup, double vfov, double aspect_ratio);
+    ray get_ray(double s, double t) const;
 
 private:
     vector3 origin;
