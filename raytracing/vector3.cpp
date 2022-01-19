@@ -127,3 +127,10 @@ vector3 cross(const vector3& u, const vector3& v) {
 vector3 reflect(const vector3& v, const vector3& n) {
     return v - 2 * dot(v, n) * n;
 }
+
+vector3 refract(const vector3& uv, const vector3& n, double etai_over_etat) {
+    double cos_theta = fmin(dot(-uv, n), 1.0);
+    vector3 r_out_perp = etai_over_etat * (uv + cos_theta * n);
+    vector3 r_out_parallel = -sqrt(fabs(1.0 - r_out_perp.length_squared())) * n;
+    return r_out_perp + r_out_parallel;
+}

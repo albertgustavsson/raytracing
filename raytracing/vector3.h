@@ -41,3 +41,4 @@ vector3 operator/(const vector3& v, const double t);
 double dot(const vector3& u, const vector3& v);
 vector3 cross(const vector3& u, const vector3& v);
 vector3 reflect(const vector3& v, const vector3& n);
+vector3 refract(const vector3& uv, const vector3& n, double etai_over_etat);
