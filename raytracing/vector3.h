@@ -10,6 +10,7 @@ public:
     inline static vector3 random();
     inline static vector3 random(double min, double max);
     static vector3 random_in_unit_sphere();
+    static vector3 random_in_unit_disk();
     static vector3 random_unit_vector();
     static vector3 random_in_hemisphere(const vector3& normal);
 

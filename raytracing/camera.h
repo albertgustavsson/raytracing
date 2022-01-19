@@ -4,12 +4,13 @@
 class camera
 {
 public:
-    camera(vector3 lookfrom, vector3 lookat, vector3 vup, double vfov, double aspect_ratio);
+    camera(vector3 lookfrom, vector3 lookat, vector3 vup, double vfov, double aspect_ratio, double aperture, double focus_dist);
     ray get_ray(double s, double t) const;
 
 private:
     vector3 origin;
     vector3 lower_left_corner;
-    vector3 horizontal;
-    vector3 vertical;
+    vector3 horizontal, vertical;
+    vector3 u, v, w;
+    double lens_radius;
 };

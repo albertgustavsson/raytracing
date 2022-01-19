@@ -31,9 +31,9 @@ rgb_color ray_color(const ray& r, const hittable& world, unsigned int depth) {
 int main() {
 	// Image
 	const double aspect_ratio = 16.0 / 9.0;
-	const unsigned int image_width = 400;
+	const unsigned int image_width = 500;
 	const unsigned int image_height = (unsigned int)((double)image_width / aspect_ratio);
-	const unsigned int samples_per_pixel = 100;
+	const unsigned int samples_per_pixel = 200;
 	const unsigned int max_depth = 10;
 
 	// World
@@ -52,7 +52,12 @@ int main() {
 
 	// Camera
 	//camera cam(vector3(0,0,0), vector3(0, 0, -1), vector3(0, 1, 0), 90.0, aspect_ratio);
-	camera cam(vector3(-2,2,1), vector3(0, 0, -1), vector3(0, 1, 0), 20, aspect_ratio);
+	vector3 lookfrom(3, 3, 2);
+	vector3 lookat(0, 0, -1);
+	vector3 vup(0, 1, 0);
+	auto dist_to_focus = (lookfrom - lookat).length();
+	auto aperture = 2.0;
+	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 
 	std::cout << "Creating image (" << image_width << "x" << image_height << ")" << std::endl;
 	image img(image_width, image_height);
