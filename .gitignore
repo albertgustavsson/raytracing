@@ -351,4 +351,3 @@ MigrationBackup/
 
 # Image output
 *.ppm
-!/final_render.ppm
