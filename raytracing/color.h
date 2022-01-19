@@ -5,6 +5,8 @@ class rgb_color
 public:
 	rgb_color();
 	rgb_color(double r, double g, double b);
+	static rgb_color random();
+	static rgb_color random(double min, double max);
 	uint8_t get_r_u8();
 	uint8_t get_g_u8();
 	uint8_t get_b_u8();
