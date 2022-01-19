@@ -9,29 +9,7 @@
 */
 
 /* Constructor for Image */
-image::image() : width(0), height(0), pixels(nullptr) {}
-
-/* Constructor for Image */
-image::image(unsigned long int w, unsigned long int h) : width(w), height(h) {
-	pixels = new rgb_color[w * h];
-}
-
-/* Copy constructor for Image */
-image::image(const image& other) : width(other.width), height(other.height) {
-	pixels = new rgb_color[width * height];
-	std::copy(other.pixels, other.pixels + (width * height), pixels);
-}
-
-/* Move constructor for Image */
-image::image(image&& other) noexcept : width(other.width), height(other.height), pixels(other.pixels) {
-	other.pixels = nullptr;
-	other.width = 0;
-	other.height = 0;
-}
-
-image::~image() {
-	delete[] pixels;
-}
+image::image(unsigned long int w, unsigned long int h) : width(w), height(h), pixels(w*h) {}
 
 void image::save_to_file(const std::string& filename) {
 	std::string extension = filename.substr(filename.find_last_of(".") + 1);
