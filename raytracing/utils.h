@@ -1,6 +1,8 @@
 #pragma once
+#include <iostream>
 #include <limits>
 #include <random>
+#include <chrono>
 #include "vector3.h"
 #include "ray.h"
 #include "color.h"
@@ -24,3 +26,17 @@ inline double random_double(double min, double max) {
 	// Returns a random real in [min,max).
 	return min + (max - min) * random_double();
 }
+
+struct timer {
+	std::string name;
+	std::chrono::steady_clock::time_point start, end;
+	timer(std::string name) : name(name) {
+		start = std::chrono::high_resolution_clock::now();
+	}
+
+	~timer() {
+		end = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+		std::cout << name << " took " << duration.count() / 1000.0 << " seconds" << std::endl;
+	}
+};

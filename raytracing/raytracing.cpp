@@ -79,9 +79,9 @@ hittable_list random_scene() {
 image render_image(const hittable_list& scene) {
 	// Image
 	const double aspect_ratio = 3.0 / 2.0;
-	const unsigned int image_width = 600;
+	const unsigned int image_width = 1200;
 	const unsigned int image_height = (unsigned int)((double)image_width / aspect_ratio);
-	const unsigned int samples_per_pixel = 50;
+	const unsigned int samples_per_pixel = 500;
 	const unsigned int max_depth = 50;
 
 	image img(image_width, image_height);
@@ -95,8 +95,11 @@ image render_image(const hittable_list& scene) {
 
 	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 
+	timer t("RenderingTimer");
+
+#if 0
+
 	for (long int j = 0; j < img.height; j++) {
-		std::cout << "\rGenerating image: " << (int)((double)(j) / (img.height - 1) * 100) << "%";
 		for (unsigned long int i = 0; i < img.width; i++) {
 			rgb_color pixel_color = rgb_color(0, 0, 0);
 			for (unsigned int s = 0; s < samples_per_pixel; ++s) {
@@ -113,7 +116,41 @@ image render_image(const hittable_list& scene) {
 			img.pixels[index] = pixel_color;
 		}
 	}
-	std::cout << std::endl;
+
+#else
+
+	const auto cores = std::thread::hardware_concurrency();
+	volatile std::atomic<std::size_t> row_count(0);
+	std::vector<std::future<void>> future_vector;
+
+	for (unsigned int core = 0; core < cores; core++) {
+		future_vector.emplace_back(std::async([=, &row_count, &img, &scene, &cam]() {
+			while (true) {
+				unsigned long j = row_count++;
+				if (j >= img.height)
+					break;
+
+				for (unsigned long int i = 0; i < img.width; i++) {
+					rgb_color pixel_color = rgb_color(0, 0, 0);
+					for (unsigned int s = 0; s < samples_per_pixel; ++s) {
+						double u = (i + random_double()) / (img.width - 1);
+						double v = (j + random_double()) / (img.height - 1);
+						ray r = cam.get_ray(u, v);
+						pixel_color += ray_color(r, scene, max_depth);
+					}
+					pixel_color /= samples_per_pixel;
+					pixel_color.apply_gamma_correction(1.0 / 2.2);
+
+					unsigned long int row = img.height - 1 - j;
+					unsigned long int index = img.width * row + i;
+					img.pixels[index] = pixel_color;
+				}
+			}
+			}));
+	}
+	for (unsigned int core = 0; core < cores; core++) future_vector[core].wait();
+
+#endif
 
 	return img;
 }
