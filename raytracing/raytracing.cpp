@@ -76,12 +76,36 @@ hittable_list random_scene() {
 	return scene;
 }
 
+void render_area(image& img, const hittable_list& scene, const camera& cam,
+		const unsigned int samples_per_pixel, const unsigned int max_depth,
+		const unsigned long int x_start, const unsigned long int x_end,
+		const unsigned long int y_start, const unsigned long int y_end) {
+	
+	for (unsigned long int y = y_start; y < y_end; y++) {
+		for (unsigned long int x = x_start; x < x_end; x++) {
+			rgb_color pixel_color = rgb_color(0, 0, 0);
+			for (unsigned int s = 0; s < samples_per_pixel; s++) {
+				double u = (x + random_double()) / (img.width - 1);
+				double v = (y + random_double()) / (img.height - 1);
+				ray r = cam.get_ray(u, v);
+				pixel_color += ray_color(r, scene, max_depth);
+			}
+			pixel_color /= samples_per_pixel;
+			pixel_color.apply_gamma_correction(1.0 / 2.2);
+
+			unsigned long int row = img.height - 1 - y;
+			unsigned long int index = img.width * row + x;
+			img.pixels[index] = pixel_color;
+		}
+	}
+}
+
 image render_image(const hittable_list& scene) {
 	// Image
 	const double aspect_ratio = 3.0 / 2.0;
-	const unsigned int image_width = 1200;
+	const unsigned int image_width = 600;
 	const unsigned int image_height = (unsigned int)((double)image_width / aspect_ratio);
-	const unsigned int samples_per_pixel = 500;
+	const unsigned int samples_per_pixel = 10;
 	const unsigned int max_depth = 50;
 
 	image img(image_width, image_height);
@@ -97,58 +121,47 @@ image render_image(const hittable_list& scene) {
 
 	timer t("RenderingTimer");
 
-#if 0
+#define PARALLEL 1
 
-	for (long int j = 0; j < img.height; j++) {
-		for (unsigned long int i = 0; i < img.width; i++) {
-			rgb_color pixel_color = rgb_color(0, 0, 0);
-			for (unsigned int s = 0; s < samples_per_pixel; ++s) {
-				double u = (i + random_double()) / (img.width - 1);
-				double v = (j + random_double()) / (img.height - 1);
-				ray r = cam.get_ray(u, v);
-				pixel_color += ray_color(r, scene, max_depth);
-			}
-			pixel_color /= samples_per_pixel;
-			pixel_color.apply_gamma_correction(1.0 / 2.2);
+#if PARALLEL == 0
+	/*
+	Sequential
+	*/
 
-			unsigned long int row = img.height - 1 - j;
-			unsigned long int index = img.width * row + i;
-			img.pixels[index] = pixel_color;
-		}
-	}
+	render_area(img, scene, cam, samples_per_pixel, max_depth, 0, img.width, 0, img.height);
 
-#else
+#elif PARALLEL == 1
+	/*
+	Parallel with rectangular blocks
+	 - all threads work until there are no more blocks to render
+	*/
 
-	const auto cores = std::thread::hardware_concurrency();
-	volatile std::atomic<std::size_t> row_count(0);
+	const auto n_threads = std::thread::hardware_concurrency();
 	std::vector<std::future<void>> future_vector;
+	volatile std::atomic<unsigned long int> block_counter(0);
+	const unsigned int block_width = 32, block_height = 32;
+	const unsigned int n_x_blocks = img.width / block_width + (img.width % block_width != 0);
+	const unsigned int n_y_blocks = img.height / block_height + (img.height % block_height != 0);
+	const unsigned int n_blocks = n_x_blocks * n_y_blocks;
 
-	for (unsigned int core = 0; core < cores; core++) {
-		future_vector.emplace_back(std::async([=, &row_count, &img, &scene, &cam]() {
+	for (unsigned int thread = 0; thread < n_threads; thread++) {
+		future_vector.emplace_back(std::async([=, &block_counter, &img, &scene, &cam]() {
 			while (true) {
-				unsigned long j = row_count++;
-				if (j >= img.height)
+				unsigned int block = block_counter++;
+				if (block >= n_blocks)
 					break;
+				unsigned int y_block = block / n_x_blocks;
+				unsigned int x_block = block % n_x_blocks;
+				unsigned long int x_start = x_block * block_width;
+				unsigned long int x_end = std::min(x_start + block_width, img.width);
+				unsigned long int y_start = y_block * block_height;
+				unsigned long int y_end = std::min(y_start + block_height, img.height);
 
-				for (unsigned long int i = 0; i < img.width; i++) {
-					rgb_color pixel_color = rgb_color(0, 0, 0);
-					for (unsigned int s = 0; s < samples_per_pixel; ++s) {
-						double u = (i + random_double()) / (img.width - 1);
-						double v = (j + random_double()) / (img.height - 1);
-						ray r = cam.get_ray(u, v);
-						pixel_color += ray_color(r, scene, max_depth);
-					}
-					pixel_color /= samples_per_pixel;
-					pixel_color.apply_gamma_correction(1.0 / 2.2);
-
-					unsigned long int row = img.height - 1 - j;
-					unsigned long int index = img.width * row + i;
-					img.pixels[index] = pixel_color;
-				}
+				render_area(img, scene, cam, samples_per_pixel, max_depth, x_start, x_end, y_start, y_end);
 			}
-			}));
+		}));
 	}
-	for (unsigned int core = 0; core < cores; core++) future_vector[core].wait();
+	for (unsigned int thread = 0; thread < n_threads; thread++) future_vector[thread].wait();
 
 #endif
 
