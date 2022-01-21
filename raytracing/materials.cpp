@@ -39,8 +39,7 @@ bool dielectric::scatter(const ray& r_in, const hit_record& rec, rgb_color& atte
     return true;
 }
 
-double dielectric::reflectance(double cosine, double ref_idx)
-{
+double dielectric::reflectance(double cosine, double ref_idx) {
     // Use Schlick's approximation for reflectance.
     double r0 = (1 - ref_idx) / (1 + ref_idx);
     r0 = r0 * r0;

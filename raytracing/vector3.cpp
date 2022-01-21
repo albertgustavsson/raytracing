@@ -89,7 +89,7 @@ double vector3::length_squared() const {
 
 bool vector3::near_zero() const {
     // Return true if the vector is close to zero in all dimensions.
-    const auto s = 1e-8;
+    const double s = 1e-8;
     return (fabs(x) < s) && (fabs(y) < s) && (fabs(z) < s);
 }
 
