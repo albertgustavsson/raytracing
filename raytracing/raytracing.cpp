@@ -103,9 +103,9 @@ void render_area(image& img, const hittable_list& scene, const camera& cam,
 image render_image(const hittable_list& scene) {
 	// Image
 	const double aspect_ratio = 3.0 / 2.0;
-	const unsigned int image_width = 600;
+	const unsigned int image_width = 1200;
 	const unsigned int image_height = (unsigned int)((double)image_width / aspect_ratio);
-	const unsigned int samples_per_pixel = 10;
+	const unsigned int samples_per_pixel = 500;
 	const unsigned int max_depth = 50;
 
 	image img(image_width, image_height);
@@ -115,43 +115,29 @@ image render_image(const hittable_list& scene) {
 	vector3 lookat(0, 0, 0);
 	vector3 vup(0, 1, 0);
 	double dist_to_focus = 10.0;
-	double aperture = 0.02;
+	double aperture = 0.01;
 
 	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
+	
+	timer t("Rendering image");
+	std::cout << "Rendering " << img.width << "x" << img.height << " image" << std::endl;
 
-	timer t("RenderingTimer");
-
-#define PARALLEL 1
-
-#if PARALLEL == 0
-	/*
-	Sequential
-	*/
-
-	render_area(img, scene, cam, samples_per_pixel, max_depth, 0, img.width, 0, img.height);
-
-#elif PARALLEL == 1
-	/*
-	Parallel with rectangular blocks
-	 - all threads work until there are no more blocks to render
-	*/
-
-	const auto n_threads = std::thread::hardware_concurrency();
+	const unsigned int n_threads = std::thread::hardware_concurrency();
 	std::vector<std::future<void>> future_vector;
 	volatile std::atomic<unsigned long int> block_counter(0);
-	const unsigned int block_width = 32, block_height = 32;
-	const unsigned int n_x_blocks = img.width / block_width + (img.width % block_width != 0);
-	const unsigned int n_y_blocks = img.height / block_height + (img.height % block_height != 0);
-	const unsigned int n_blocks = n_x_blocks * n_y_blocks;
+	const unsigned long int block_width = 32, block_height = 32;
+	const unsigned long int n_x_blocks = img.width / block_width + (img.width % block_width != 0);
+	const unsigned long int n_y_blocks = img.height / block_height + (img.height % block_height != 0);
+	const unsigned long int n_blocks = n_x_blocks * n_y_blocks;
 
 	for (unsigned int thread = 0; thread < n_threads; thread++) {
 		future_vector.emplace_back(std::async([=, &block_counter, &img, &scene, &cam]() {
 			while (true) {
-				unsigned int block = block_counter++;
+				unsigned long int block = block_counter++;
 				if (block >= n_blocks)
 					break;
-				unsigned int y_block = block / n_x_blocks;
-				unsigned int x_block = block % n_x_blocks;
+				unsigned long int y_block = block / n_x_blocks;
+				unsigned long int x_block = block % n_x_blocks;
 				unsigned long int x_start = x_block * block_width;
 				unsigned long int x_end = std::min(x_start + block_width, img.width);
 				unsigned long int y_start = y_block * block_height;
@@ -161,9 +147,25 @@ image render_image(const hittable_list& scene) {
 			}
 		}));
 	}
-	for (unsigned int thread = 0; thread < n_threads; thread++) future_vector[thread].wait();
+	
+	std::future<void> progress_future = std::async([=, &block_counter]() {
+		while (true) {
+			unsigned long int block = block_counter;
+			unsigned long int block_lim = std::min(block, n_blocks);
+			std::cout << '\r' << (short int)((double)block_lim / n_blocks * 100) << '%'
+				<< "  (block " << block_lim << "/" << n_blocks << ')';
 
-#endif
+			if (block >= n_blocks + n_threads) {
+				std::cout << std::endl;
+				break;
+			}
+			
+			std::this_thread::sleep_for(std::chrono::milliseconds(200));
+		}
+	});
+
+	for (unsigned int thread = 0; thread < n_threads; thread++) future_vector[thread].wait();
+	progress_future.wait();
 
 	return img;
 }
