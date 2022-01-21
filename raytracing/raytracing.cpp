@@ -171,7 +171,7 @@ int main() {
 	double aspect_ratio = 3.0 / 2.0;
 	unsigned int image_width = 1200;
 	unsigned int image_height = (unsigned int)((double)image_width / aspect_ratio);
-	unsigned int samples_per_pixel = 100;
+	unsigned int samples_per_pixel = 500;
 	unsigned int n_threads = std::thread::hardware_concurrency();
 	unsigned int block_width = 32;
 	unsigned int block_height = 32;
