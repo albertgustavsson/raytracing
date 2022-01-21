@@ -100,15 +100,9 @@ void render_area(image& img, const hittable_list& scene, const camera& cam,
 	}
 }
 
-image render_image(const hittable_list& scene) {
+image render_image(const hittable_list& scene, const render_config& conf) {
 	// Image
-	const double aspect_ratio = 3.0 / 2.0;
-	const unsigned int image_width = 1200;
-	const unsigned int image_height = (unsigned int)((double)image_width / aspect_ratio);
-	const unsigned int samples_per_pixel = 500;
-	const unsigned int max_depth = 50;
-
-	image img(image_width, image_height);
+	image img(conf.image_width, conf.image_height);
 
 	// Camera
 	vector3 lookfrom(13, 2, 3);
@@ -116,21 +110,22 @@ image render_image(const hittable_list& scene) {
 	vector3 vup(0, 1, 0);
 	double dist_to_focus = 10.0;
 	double aperture = 0.01;
-
+	const double aspect_ratio = (double)conf.image_width / conf.image_height;
+	
 	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
+	
+	const unsigned int max_depth = 50;
 	
 	timer t("Rendering image");
 	std::cout << "Rendering " << img.width << "x" << img.height << " image" << std::endl;
 
-	const unsigned int n_threads = std::thread::hardware_concurrency();
 	std::vector<std::future<void>> future_vector;
 	volatile std::atomic<unsigned long int> block_counter(0);
-	const unsigned long int block_width = 32, block_height = 32;
-	const unsigned long int n_x_blocks = img.width / block_width + (img.width % block_width != 0);
-	const unsigned long int n_y_blocks = img.height / block_height + (img.height % block_height != 0);
+	const unsigned long int n_x_blocks = img.width / conf.block_width + (img.width % conf.block_width != 0);
+	const unsigned long int n_y_blocks = img.height / conf.block_height + (img.height % conf.block_height != 0);
 	const unsigned long int n_blocks = n_x_blocks * n_y_blocks;
 
-	for (unsigned int thread = 0; thread < n_threads; thread++) {
+	for (unsigned int thread = 0; thread < conf.n_threads; thread++) {
 		future_vector.emplace_back(std::async([=, &block_counter, &img, &scene, &cam]() {
 			while (true) {
 				unsigned long int block = block_counter++;
@@ -138,12 +133,12 @@ image render_image(const hittable_list& scene) {
 					break;
 				unsigned long int y_block = block / n_x_blocks;
 				unsigned long int x_block = block % n_x_blocks;
-				unsigned long int x_start = x_block * block_width;
-				unsigned long int x_end = std::min(x_start + block_width, img.width);
-				unsigned long int y_start = y_block * block_height;
-				unsigned long int y_end = std::min(y_start + block_height, img.height);
+				unsigned long int x_start = x_block * conf.block_width;
+				unsigned long int x_end = std::min(x_start + conf.block_width, img.width);
+				unsigned long int y_start = y_block * conf.block_height;
+				unsigned long int y_end = std::min(y_start + conf.block_height, img.height);
 
-				render_area(img, scene, cam, samples_per_pixel, max_depth, x_start, x_end, y_start, y_end);
+				render_area(img, scene, cam, conf.samples_per_pixel, max_depth, x_start, x_end, y_start, y_end);
 			}
 		}));
 	}
@@ -155,7 +150,7 @@ image render_image(const hittable_list& scene) {
 			std::cout << '\r' << (short int)((double)block_lim / n_blocks * 100) << '%'
 				<< "  (block " << block_lim << "/" << n_blocks << ')';
 
-			if (block >= n_blocks + n_threads) {
+			if (block >= n_blocks + conf.n_threads) {
 				std::cout << std::endl;
 				break;
 			}
@@ -164,7 +159,7 @@ image render_image(const hittable_list& scene) {
 		}
 	});
 
-	for (unsigned int thread = 0; thread < n_threads; thread++) future_vector[thread].wait();
+	for (unsigned int thread = 0; thread < conf.n_threads; thread++) future_vector[thread].wait();
 	progress_future.wait();
 
 	return img;
@@ -173,7 +168,22 @@ image render_image(const hittable_list& scene) {
 int main() {
 	hittable_list scene = random_scene();
 
-	image img = render_image(scene);
+	double aspect_ratio = 3.0 / 2.0;
+	unsigned int image_width = 1200;
+	unsigned int image_height = (unsigned int)((double)image_width / aspect_ratio);
+	unsigned int samples_per_pixel = 100;
+	unsigned int n_threads = std::thread::hardware_concurrency();
+	unsigned int block_width = 32;
+	unsigned int block_height = 32;
+	render_config conf = {
+		.image_width = image_width,
+		.image_height = image_height,
+		.samples_per_pixel = samples_per_pixel,
+		.n_threads = n_threads,
+		.block_width = block_width,
+		.block_height = block_height};
+
+	image img = render_image(scene, conf);
 
 	img.save_to_file("image.ppm");
 }
