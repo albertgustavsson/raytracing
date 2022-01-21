@@ -78,11 +78,11 @@ hittable_list random_scene() {
 
 void render_area(image& img, const hittable_list& scene, const camera& cam,
 		const unsigned int samples_per_pixel, const unsigned int max_depth,
-		const unsigned long int x_start, const unsigned long int x_end,
-		const unsigned long int y_start, const unsigned long int y_end) {
+		const unsigned int x_start, const unsigned int x_end,
+		const unsigned int y_start, const unsigned int y_end) {
 	
-	for (unsigned long int y = y_start; y < y_end; y++) {
-		for (unsigned long int x = x_start; x < x_end; x++) {
+	for (unsigned int y = y_start; y < y_end; y++) {
+		for (unsigned int x = x_start; x < x_end; x++) {
 			rgb_color pixel_color = rgb_color(0, 0, 0);
 			for (unsigned int s = 0; s < samples_per_pixel; s++) {
 				double u = (x + random_double()) / (img.width - 1);
@@ -93,7 +93,7 @@ void render_area(image& img, const hittable_list& scene, const camera& cam,
 			pixel_color /= samples_per_pixel;
 			pixel_color.apply_gamma_correction(1.0 / 2.2);
 
-			unsigned long int row = img.height - 1 - y;
+			unsigned int row = img.height - 1 - y;
 			unsigned long int index = img.width * row + x;
 			img.pixels[index] = pixel_color;
 		}
@@ -120,23 +120,23 @@ image render_image(const hittable_list& scene, const render_config& conf) {
 	std::cout << "Rendering " << img.width << "x" << img.height << " image" << std::endl;
 
 	std::vector<std::future<void>> future_vector;
-	volatile std::atomic<unsigned long int> block_counter(0);
-	const unsigned long int n_x_blocks = img.width / conf.block_width + (img.width % conf.block_width != 0);
-	const unsigned long int n_y_blocks = img.height / conf.block_height + (img.height % conf.block_height != 0);
-	const unsigned long int n_blocks = n_x_blocks * n_y_blocks;
+	volatile std::atomic<unsigned int> block_counter(0);
+	const unsigned int n_x_blocks = img.width / conf.block_width + (img.width % conf.block_width != 0);
+	const unsigned int n_y_blocks = img.height / conf.block_height + (img.height % conf.block_height != 0);
+	const unsigned int n_blocks = n_x_blocks * n_y_blocks;
 
 	for (unsigned int thread = 0; thread < conf.n_threads; thread++) {
 		future_vector.emplace_back(std::async([=, &block_counter, &img, &scene, &cam]() {
 			while (true) {
-				unsigned long int block = block_counter++;
+				unsigned int block = block_counter++;
 				if (block >= n_blocks)
 					break;
-				unsigned long int y_block = block / n_x_blocks;
-				unsigned long int x_block = block % n_x_blocks;
-				unsigned long int x_start = x_block * conf.block_width;
-				unsigned long int x_end = std::min(x_start + conf.block_width, img.width);
-				unsigned long int y_start = y_block * conf.block_height;
-				unsigned long int y_end = std::min(y_start + conf.block_height, img.height);
+				unsigned int y_block = block / n_x_blocks;
+				unsigned int x_block = block % n_x_blocks;
+				unsigned int x_start = x_block * conf.block_width;
+				unsigned int x_end = std::min(x_start + conf.block_width, img.width);
+				unsigned int y_start = y_block * conf.block_height;
+				unsigned int y_end = std::min(y_start + conf.block_height, img.height);
 
 				render_area(img, scene, cam, conf.samples_per_pixel, max_depth, x_start, x_end, y_start, y_end);
 			}
@@ -145,8 +145,8 @@ image render_image(const hittable_list& scene, const render_config& conf) {
 	
 	std::future<void> progress_future = std::async([=, &block_counter]() {
 		while (true) {
-			unsigned long int block = block_counter;
-			unsigned long int block_lim = std::min(block, n_blocks);
+			unsigned int block = block_counter;
+			unsigned int block_lim = std::min(block, n_blocks);
 			std::cout << '\r' << (short int)((double)block_lim / n_blocks * 100) << '%'
 				<< "  (block " << block_lim << "/" << n_blocks << ')';
 

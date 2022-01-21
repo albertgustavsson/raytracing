@@ -5,11 +5,11 @@
 class image
 {
 public:
-	image(unsigned long int width, unsigned long int height);
+	image(unsigned int width, unsigned int height);
 	void save_to_file(const std::string& filename);
 	void save_to_ppm(const std::string& filename);
 public:
-	unsigned long int width;
-	unsigned long int height;
+	unsigned int width;
+	unsigned int height;
 	std::vector<rgb_color> pixels;
 };

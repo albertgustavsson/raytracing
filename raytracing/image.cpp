@@ -9,7 +9,7 @@
 */
 
 /* Constructor for Image */
-image::image(unsigned long int w, unsigned long int h) : width(w), height(h), pixels(w*h) {}
+image::image(unsigned int w, unsigned int h) : width(w), height(h), pixels(w*h) {}
 
 void image::save_to_file(const std::string& filename) {
 	std::string extension = filename.substr(filename.find_last_of(".") + 1);
@@ -25,9 +25,9 @@ void image::save_to_ppm(const std::string& filename) {
 	std::ofstream outFile;
 	outFile.open(filename);
 	outFile << "P3\n" << width << ' ' << height << "\n255\n";
-	for (unsigned long int row = 0; row < height; row++) {
+	for (unsigned int row = 0; row < height; row++) {
 		std::cout << "\rWriting image to file: " << (int)((double)row / (height - 1) * 100) << "%";
-		for (unsigned long int col = 0; col < width; col++) {
+		for (unsigned int col = 0; col < width; col++) {
 			unsigned long int index = width * row + col;
 			rgb_color& pixel = pixels[index];
 			uint8_t r = pixel.get_r_u8();
