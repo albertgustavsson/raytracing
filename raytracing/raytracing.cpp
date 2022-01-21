@@ -2,12 +2,13 @@
 #include <iomanip>
 #include <thread>
 #include <future>
+#include "utils.h"
 #include "image.h"
 #include "color.h"
+#include "camera.h"
 #include "hittable_list.h"
 #include "sphere.h"
-#include "utils.h"
-#include "camera.h"
+#include "triangle.h"
 
 rgb_color ray_color(const ray& r, const hittable& world, unsigned int depth) {
 	// If we've exceeded the ray bounce limit, no more light is gathered.
@@ -35,7 +36,13 @@ hittable_list random_scene() {
 	hittable_list scene;
 
 	auto ground_material = std::make_shared<lambertian>(rgb_color(0.5, 0.5, 0.5));
-	scene.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, ground_material));
+	const int half_side = 15;
+	vector3 corner0(-half_side, 0, -half_side);
+	vector3 corner1(-half_side, 0, half_side);
+	vector3 corner2(half_side, 0, -half_side);
+	vector3 corner3(half_side, 0, half_side);
+	scene.add(std::make_shared<triangle>(corner0, corner1, corner2, ground_material));
+	scene.add(std::make_shared<triangle>(corner1, corner3, corner2, ground_material));
 
 	for (int a = -11; a < 11; a++) {
 		for (int b = -11; b < 11; b++) {
@@ -112,7 +119,7 @@ image render_image(const hittable_list& scene, const render_config& conf) {
 	double dist_to_focus = 10.0;
 	double aperture = 0.01;
 	const double aspect_ratio = (double)conf.image_width / conf.image_height;
-	
+
 	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
 	
 	const unsigned int max_depth = 50;

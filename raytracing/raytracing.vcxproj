@@ -149,11 +149,13 @@
     <ClCompile Include="raytracing.cpp" />
     <ClCompile Include="color.cpp" />
     <ClCompile Include="sphere.cpp" />
+    <ClCompile Include="triangle.cpp" />
     <ClCompile Include="vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="materials.h" />
+    <ClInclude Include="triangle.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="hittable.h" />
     <ClInclude Include="hittable_list.h" />
