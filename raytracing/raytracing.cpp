@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <thread>
 #include <future>
 #include "image.h"
@@ -147,8 +148,10 @@ image render_image(const hittable_list& scene, const render_config& conf) {
 		while (true) {
 			unsigned int block = block_counter;
 			unsigned int block_lim = std::min(block, n_blocks);
-			std::cout << '\r' << (short int)((double)block_lim / n_blocks * 100) << '%'
-				<< "  (block " << block_lim << "/" << n_blocks << ')';
+			short int percentage = (double)block_lim / n_blocks * 100;
+			unsigned int block_digits = (unsigned int)log10((double)n_blocks) + 1;
+			std::cout << '\r' << std::setw(3) << percentage << "% (block " <<
+				std::setw(block_digits) << block_lim << '/' << n_blocks << ')';
 
 			if (block >= n_blocks + conf.n_threads) {
 				std::cout << std::endl;
