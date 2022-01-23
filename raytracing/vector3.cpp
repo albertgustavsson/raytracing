@@ -3,7 +3,7 @@
 #include "vector3.h"
 #include "utils.h"
 
-vector3::vector3() : vector3(0,0,0) {}
+vector3::vector3() : vector3(0, 0, 0) {}
 vector3::vector3(double x, double y, double z) : x(x), y(y), z(z) {}
 
 inline vector3 vector3::random() {
@@ -22,8 +22,7 @@ vector3 vector3::random_in_unit_sphere() {
     }
 }
 
-vector3 vector3::random_in_unit_disk()
-{
+vector3 vector3::random_in_unit_disk() {
     while (true) {
         auto p = vector3(random_double(-1, 1), random_double(-1, 1), 0);
         if (p.length_squared() >= 1) continue;

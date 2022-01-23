@@ -1,8 +1,7 @@
 #pragma once
 #include <ostream>
 
-class vector3
-{
+class vector3 {
 public:
     vector3();
     vector3(double x, double y, double z);

@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
-class rgb_color
-{
+
+class rgb_color {
 public:
 	rgb_color();
 	rgb_color(double r, double g, double b);

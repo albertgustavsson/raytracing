@@ -9,6 +9,7 @@
 #include "hittable_list.h"
 #include "sphere.h"
 #include "triangle.h"
+#include "materials.h"
 
 rgb_color ray_color(const ray& r, const hittable& world, unsigned int depth) {
 	// If we've exceeded the ray bounce limit, no more light is gathered.
@@ -35,7 +36,7 @@ rgb_color ray_color(const ray& r, const hittable& world, unsigned int depth) {
 hittable_list random_scene() {
 	hittable_list scene;
 
-	auto ground_material = std::make_shared<lambertian>(rgb_color(0.5, 0.5, 0.5));
+	std::shared_ptr<lambertian> ground_material = std::make_shared<lambertian>(rgb_color(0.5, 0.5, 0.5));
 	const int half_side = 15;
 	vector3 corner0(-half_side, 0, -half_side);
 	vector3 corner1(-half_side, 0, half_side);

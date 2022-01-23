@@ -1,9 +1,8 @@
 #pragma once
-#include"color.h"
 #include <vector>
+#include"color.h"
 
-class image
-{
+class image {
 public:
 	image(unsigned int width, unsigned int height);
 	void save_to_file(const std::string& filename);

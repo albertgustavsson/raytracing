@@ -9,7 +9,7 @@
 */
 
 /* Constructor for Image */
-image::image(unsigned int w, unsigned int h) : width(w), height(h), pixels(w*h) {}
+image::image(unsigned int w, unsigned int h) : width(w), height(h), pixels(w * h) {}
 
 void image::save_to_file(const std::string& filename) {
 	std::string extension = filename.substr(filename.find_last_of(".") + 1);

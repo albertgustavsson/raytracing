@@ -1,10 +1,9 @@
 #pragma once
-#include "Vector3.h"
+#include "vector3.h"
 
-class ray
-{
+class ray {
 public:
-	ray();
+	ray(); // TODO: remove
 	ray(const vector3& o, const vector3& d);
 	vector3 at(double t) const;
 public:

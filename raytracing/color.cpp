@@ -1,6 +1,6 @@
 #include <cmath>
-#include "color.h"
 #include <algorithm>
+#include "color.h"
 #include "utils.h"
 
 rgb_color::rgb_color() : r(0.0), g(0.0), b(0.0) {}
