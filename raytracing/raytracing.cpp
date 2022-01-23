@@ -14,7 +14,7 @@
 #include "renderer.h"
 
 int main() {
-	hittable_list scene = random_scene();
+	hittable_list scene = random_scene_triangles();
 
 	double aspect_ratio = 3.0 / 2.0;
 	unsigned int image_width = 1200;

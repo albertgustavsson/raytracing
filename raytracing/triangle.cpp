@@ -26,6 +26,9 @@ bool triangle::hit(const ray& r, double t_min, double t_max, hit_record& rec) co
     
     // At this stage we can compute t to find out where the intersection point is on the line.
     double t = f * dot(edge2, q);
+    if (t < t_min || t > t_max)
+        return false;
+    
     if (t > EPSILON) {
         // ray intersection
         rec.p = r.origin + r.direction * t;
