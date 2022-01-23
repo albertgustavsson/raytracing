@@ -35,12 +35,3 @@ struct timer {
 		std::cout << name << " took " << duration.count() / 1000.0 << " seconds" << std::endl;
 	}
 };
-
-struct render_config {
-	unsigned int image_width;
-	unsigned int image_height;
-	unsigned int samples_per_pixel;
-	unsigned int n_threads;
-	unsigned int block_width;
-	unsigned int block_height;
-};
