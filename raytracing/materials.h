@@ -1,8 +1,9 @@
 #pragma once
 #include <algorithm>
-#include "utils.h"
-
-struct hit_record; // Because c++ is stupid
+#include <memory>
+#include "textures.h"
+#include "ray.h"
+#include "hittable.h"
 
 class material {
 public:
@@ -11,10 +12,12 @@ public:
 
 class lambertian : public material {
 public:
-    lambertian(const rgb_color& a) : albedo(a) {}
+    lambertian(const rgb_color& a) : albedo(std::make_shared<solid_color>(a)) {}
+    lambertian(std::shared_ptr<texture> a) : albedo(a) {}
     virtual bool scatter(const ray& r_in, const hit_record& rec, rgb_color& attenuation, ray& scattered) const override;
+
 public:
-    rgb_color albedo;
+    std::shared_ptr<texture> albedo;
 };
 
 class metal : public material {

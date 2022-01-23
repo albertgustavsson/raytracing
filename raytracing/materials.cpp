@@ -1,4 +1,5 @@
 #include "materials.h"
+#include "utils.h"
 
 bool lambertian::scatter(const ray& r_in, const hit_record& rec, rgb_color& attenuation, ray& scattered) const {
     vector3 scatter_direction = rec.normal + vector3::random_unit_vector();
@@ -8,7 +9,7 @@ bool lambertian::scatter(const ray& r_in, const hit_record& rec, rgb_color& atte
         scatter_direction = rec.normal;
     
     scattered = ray(rec.p, scatter_direction);
-    attenuation = albedo;
+    attenuation = albedo->value(rec.u, rec.v, rec.p);
     return true;
 }
 

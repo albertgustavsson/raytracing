@@ -1,4 +1,5 @@
 #include "camera.h"
+#include "utils.h"
 
 camera::camera(vector3 lookfrom, vector3 lookat, vector3 vup, double vfov, double aspect_ratio, double aperture, double focus_dist) {
     double theta = degrees_to_radians(vfov);

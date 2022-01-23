@@ -3,11 +3,6 @@
 #include <limits>
 #include <random>
 #include <chrono>
-#include "vector3.h"
-#include "ray.h"
-#include "color.h"
-#include "hittable.h"
-#include "materials.h"
 
 const double infinity = std::numeric_limits<double>::infinity();
 const double pi = 3.1415926535897932385;
