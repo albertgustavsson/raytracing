@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #include "utils.h"
 
 struct hit_record; // Because c++ is stupid

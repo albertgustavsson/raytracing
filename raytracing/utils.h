@@ -29,7 +29,7 @@ inline double random_double(double min, double max) {
 
 struct timer {
 	std::string name;
-	std::chrono::steady_clock::time_point start, end;
+	std::chrono::high_resolution_clock::time_point start, end;
 	timer(std::string name) : name(name) {
 		start = std::chrono::high_resolution_clock::now();
 	}

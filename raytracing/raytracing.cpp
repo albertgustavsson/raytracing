@@ -155,7 +155,7 @@ image render_image(const hittable_list& scene, const render_config& conf) {
 		while (true) {
 			unsigned int block = block_counter;
 			unsigned int block_lim = std::min(block, n_blocks);
-			short int percentage = (double)block_lim / n_blocks * 100;
+			short int percentage = (short int)((double)block_lim / n_blocks * 100);
 			unsigned int block_digits = (unsigned int)log10((double)n_blocks) + 1;
 			std::cout << '\r' << std::setw(3) << percentage << "% (block " <<
 				std::setw(block_digits) << block_lim << '/' << n_blocks << ')';
