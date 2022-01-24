@@ -3,7 +3,7 @@
 #include "color.h"
 #include "utils.h"
 
-rgb_color::rgb_color() : rgb_color(0, 0, 0) {}
+rgb_color::rgb_color() : rgb_color(0) {}
 rgb_color::rgb_color(double r, double g, double b) : r(r), g(g), b(b) {}
 rgb_color::rgb_color(double i) : rgb_color(i, i, i) {}
 
@@ -35,6 +35,14 @@ rgb_color& rgb_color::operator+=(const rgb_color& c) {
 	return *this = *this + c;
 }
 
+rgb_color& rgb_color::operator*=(const rgb_color& c) {
+	return *this = *this * c;
+}
+
+rgb_color& rgb_color::operator*=(const double t) {
+	return *this = *this * t;
+}
+
 rgb_color& rgb_color::operator/=(const double t) {
 	return *this = *this / t;
 }
@@ -48,7 +56,7 @@ rgb_color operator*(const rgb_color& c, const rgb_color& d) {
 }
 
 rgb_color operator*(const rgb_color& c, const double t) {
-	return rgb_color(c.r * t, c.g * t, c.b * t);
+	return c * rgb_color(t);
 }
 
 rgb_color operator*(const double t, const rgb_color& c) {
@@ -56,9 +64,5 @@ rgb_color operator*(const double t, const rgb_color& c) {
 }
 
 rgb_color operator/(const rgb_color& c, const double t) {
-	return rgb_color(c.r / t, c.g / t, c.b / t);
-}
-
-rgb_color operator/(const double t, const rgb_color& c) {
-	return c / t;
+	return c * (1.0 / t);
 }

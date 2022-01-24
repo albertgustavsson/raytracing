@@ -2,7 +2,7 @@
 #include "utils.h"
 
 rgb_color material::emitted(double u, double v, const vector3& p) const {
-    return rgb_color(0, 0, 0);
+    return rgb_color(0);
 }
 
 bool lambertian::scatter(const ray& r_in, const hit_record& rec, rgb_color& attenuation, ray& scattered) const {
@@ -25,7 +25,7 @@ bool metal::scatter(const ray& r_in, const hit_record& rec, rgb_color& attenuati
 }
 
 bool dielectric::scatter(const ray& r_in, const hit_record& rec, rgb_color& attenuation, ray& scattered) const {
-    attenuation = rgb_color(1.0, 1.0, 1.0);
+    attenuation = rgb_color(1);
     double refraction_ratio = rec.front_face ? (1.0 / ir) : ir;
 
     vector3 unit_direction = r_in.direction.get_normalized();

@@ -8,10 +8,8 @@
 
 rgb_color ray_color(const ray& r, const rgb_color& background, const scene& sc, unsigned int depth) {
 	// If we've exceeded the ray bounce limit, no more light is gathered.
-	const rgb_color black(0.0, 0.0, 0.0);
-
 	if (depth <= 0)
-		return black;
+		return rgb_color(0);
 
 	hit_record rec;
 	if (!sc.hit(r, 0.000001, infinity, rec))
@@ -29,7 +27,7 @@ void render_area(image& img, const scene& sc,
 		const render_config& rc, const block_config& bc) {
 	for (unsigned int y = bc.y_start; y < bc.y_end; y++) {
 		for (unsigned int x = bc.x_start; x < bc.x_end; x++) {
-			rgb_color pixel_color = rgb_color(0, 0, 0);
+			rgb_color pixel_color(0);
 			for (unsigned int s = 0; s < rc.samples_per_pixel; s++) {
 				double u = (x + random_double()) / (img.width - 1);
 				double v = (y + random_double()) / (img.height - 1);

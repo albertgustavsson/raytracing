@@ -35,7 +35,7 @@ int main() {
 		.samples_per_pixel = 500,
 		.n_threads = std::thread::hardware_concurrency(),
 		.max_depth = 50,
-		.background_color = rgb_color(), //rgb_color(0.75, 0.85, 1.0),
+		.background_color = rgb_color(0), //rgb_color(0.75, 0.85, 1.0),
 		.cam = camera(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus)};
 
 	image img = render_image(sc, conf);

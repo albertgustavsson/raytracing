@@ -38,13 +38,13 @@ scene random_scene_balls_only() {
 	}
 
 	std::shared_ptr<material> material1 = std::make_shared<dielectric>(1.5);
-	sc.add(std::make_shared<sphere>(vector3(0, 1, 0), 1.0, material1));
+	sc.add(std::make_shared<sphere>(vector3(0, 1, 0), 1, material1));
 
 	std::shared_ptr<material> material2 = std::make_shared<lambertian>(rgb_color(0.4, 0.2, 0.1));
-	sc.add(std::make_shared<sphere>(vector3(-4, 1, 0), 1.0, material2));
+	sc.add(std::make_shared<sphere>(vector3(-4, 1, 0), 1, material2));
 
-	std::shared_ptr<material> material3 = std::make_shared<metal>(rgb_color(0.7, 0.6, 0.5), 0.0);
-	sc.add(std::make_shared<sphere>(vector3(4, 1, 0), 1.0, material3));
+	std::shared_ptr<material> material3 = std::make_shared<metal>(rgb_color(0.7, 0.6, 0.5), 0);
+	sc.add(std::make_shared<sphere>(vector3(4, 1, 0), 1, material3));
 
 	return sc;
 }
@@ -52,7 +52,7 @@ scene random_scene_balls_only() {
 scene random_scene() {
 	scene sc = random_scene_balls_only();
 
-	std::shared_ptr<lambertian> ground_material = std::make_shared<lambertian>(rgb_color(0.5, 0.5, 0.5));
+	std::shared_ptr<lambertian> ground_material = std::make_shared<lambertian>(rgb_color(0.5));
 	sc.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, ground_material));
 
 	return sc;
@@ -61,7 +61,7 @@ scene random_scene() {
 scene random_scene_triangles() {
 	scene sc = random_scene_balls_only();
 
-	std::shared_ptr<lambertian> ground_material = std::make_shared<lambertian>(rgb_color(0.5, 0.5, 0.5));
+	std::shared_ptr<lambertian> ground_material = std::make_shared<lambertian>(rgb_color(0.5));
 	const int half_side = 15;
 	vector3 corner0(-half_side, 0, -half_side);
 	vector3 corner1(-half_side, 0, half_side);
@@ -76,7 +76,7 @@ scene random_scene_triangles() {
 scene random_scene_checker() {
 	scene sc = random_scene_balls_only();
 
-	std::shared_ptr<checker_texture> checker = std::make_shared<checker_texture>(rgb_color(0.2, 0.3, 0.1), rgb_color(0.9, 0.9, 0.9));
+	std::shared_ptr<checker_texture> checker = std::make_shared<checker_texture>(rgb_color(0.2, 0.3, 0.1), rgb_color(0.9));
 	sc.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, std::make_shared<lambertian>(checker)));
 
 	return sc;
