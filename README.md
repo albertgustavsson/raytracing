@@ -16,3 +16,7 @@ These images show the effect of changing the aperture of the camera. The images 
 <img src="images/3k-100spp-ap0_1.png" alt="Camera with aperture=0.1" width="49%"/>  
 <img src="images/3k-100spp-ap0_5.png" alt="Camera with aperture=0.5" width="49%"/>
 <img src="images/3k-100spp-ap2_0.png" alt="Camera with aperture=2.0" width="49%"/>
+
+### Emissive materials
+Below, the background was set to black and an emissive sphere was added as a light source:  
+<img src="images/1k2-500spp-ap0_01-lights.png" alt="Camera with aperture=0.01" width="60%"/>
