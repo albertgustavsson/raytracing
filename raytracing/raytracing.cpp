@@ -24,7 +24,7 @@ int main() {
 	double aperture = 0.01;
 
 	double aspect_ratio = 3.0 / 2.0;
-	unsigned int image_width = 3000;
+	unsigned int image_width = 1200;
 	unsigned int image_height = (unsigned int)((double)image_width / aspect_ratio);
 	
 	render_config conf = {
@@ -35,6 +35,7 @@ int main() {
 		.samples_per_pixel = 100,
 		.n_threads = std::thread::hardware_concurrency(),
 		.max_depth = 50,
+		.background_color = rgb_color(0.75,0.85,1.0),
 		.cam = camera(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus)};
 
 	image img = render_image(sc, conf);

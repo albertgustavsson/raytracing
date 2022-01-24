@@ -6,26 +6,23 @@
 #include "utils.h"
 #include "materials.h"
 
-rgb_color ray_color(const ray& r, const scene& sc, unsigned int depth) {
+rgb_color ray_color(const ray& r, const rgb_color& background, const scene& sc, unsigned int depth) {
 	// If we've exceeded the ray bounce limit, no more light is gathered.
 	const rgb_color black(0.0, 0.0, 0.0);
-	const rgb_color background1(1.0, 1.0, 1.0);
-	const rgb_color background2(0.5, 0.7, 1.0);
 
 	if (depth <= 0)
 		return black;
 
 	hit_record rec;
-	if (sc.hit(r, 0.000001, infinity, rec)) {
-		ray scattered;
-		rgb_color attenuation;
-		if (rec.mat_ptr->scatter(r, rec, attenuation, scattered))
-			return attenuation * ray_color(scattered, sc, depth - 1);
-		return black;
-	}
-	vector3 unit_direction = r.direction.get_normalized();
-	double t = 0.5 * (unit_direction.y + 1.0);
-	return (1.0 - t) * background1 + t * background2;
+	if (!sc.hit(r, 0.000001, infinity, rec))
+		return background;
+	
+	ray scattered;
+	rgb_color attenuation;
+	rgb_color emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
+	if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+		return emitted;
+	return emitted + attenuation * ray_color(scattered, background, sc, depth - 1);
 }
 
 void render_area(image& img, const scene& sc,
@@ -37,7 +34,7 @@ void render_area(image& img, const scene& sc,
 				double u = (x + random_double()) / (img.width - 1);
 				double v = (y + random_double()) / (img.height - 1);
 				ray r = rc.cam.get_ray(u, v);
-				pixel_color += ray_color(r, sc, rc.max_depth);
+				pixel_color += ray_color(r, rc.background_color, sc, rc.max_depth);
 			}
 			pixel_color /= rc.samples_per_pixel;
 			pixel_color.apply_gamma_correction(1.0 / 2.2);

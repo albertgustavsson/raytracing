@@ -1,6 +1,10 @@
 #include "materials.h"
 #include "utils.h"
 
+rgb_color material::emitted(double u, double v, const vector3& p) const {
+    return rgb_color(0, 0, 0);
+}
+
 bool lambertian::scatter(const ray& r_in, const hit_record& rec, rgb_color& attenuation, ray& scattered) const {
     vector3 scatter_direction = rec.normal + vector3::random_unit_vector();
     
@@ -45,4 +49,12 @@ double dielectric::reflectance(double cosine, double ref_idx) {
     double r0 = (1 - ref_idx) / (1 + ref_idx);
     r0 = r0 * r0;
     return r0 + (1 - r0) * pow((1 - cosine), 5);
+}
+
+bool diffuse_light::scatter(const ray& r_in, const hit_record& rec, rgb_color& attenuation, ray& scattered) const {
+    return false;
+}
+
+rgb_color diffuse_light::emitted(double u, double v, const vector3& p) const {
+    return emit->value(u, v, p);
 }
