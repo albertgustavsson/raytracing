@@ -2,10 +2,11 @@
 #include <future>
 #include <iomanip>
 #include "renderer.h"
+#include "scene.h"
 #include "utils.h"
 #include "materials.h"
 
-rgb_color ray_color(const ray& r, const hittable& scene, unsigned int depth) {
+rgb_color ray_color(const ray& r, const scene& sc, unsigned int depth) {
 	// If we've exceeded the ray bounce limit, no more light is gathered.
 	const rgb_color black(0.0, 0.0, 0.0);
 	const rgb_color background1(1.0, 1.0, 1.0);
@@ -15,11 +16,11 @@ rgb_color ray_color(const ray& r, const hittable& scene, unsigned int depth) {
 		return black;
 
 	hit_record rec;
-	if (scene.hit(r, 0.000001, infinity, rec)) {
+	if (sc.hit(r, 0.000001, infinity, rec)) {
 		ray scattered;
 		rgb_color attenuation;
 		if (rec.mat_ptr->scatter(r, rec, attenuation, scattered))
-			return attenuation * ray_color(scattered, scene, depth - 1);
+			return attenuation * ray_color(scattered, sc, depth - 1);
 		return black;
 	}
 	vector3 unit_direction = r.direction.get_normalized();
@@ -27,7 +28,7 @@ rgb_color ray_color(const ray& r, const hittable& scene, unsigned int depth) {
 	return (1.0 - t) * background1 + t * background2;
 }
 
-void render_area(image& img, const hittable_list& scene, const camera& cam,
+void render_area(image& img, const scene& sc, const camera& cam,
 	const unsigned int samples_per_pixel, const unsigned int max_depth,
 	const unsigned int x_start, const unsigned int x_end,
 	const unsigned int y_start, const unsigned int y_end) {
@@ -39,7 +40,7 @@ void render_area(image& img, const hittable_list& scene, const camera& cam,
 				double u = (x + random_double()) / (img.width - 1);
 				double v = (y + random_double()) / (img.height - 1);
 				ray r = cam.get_ray(u, v);
-				pixel_color += ray_color(r, scene, max_depth);
+				pixel_color += ray_color(r, sc, max_depth);
 			}
 			pixel_color /= samples_per_pixel;
 			pixel_color.apply_gamma_correction(1.0 / 2.2);
@@ -51,7 +52,7 @@ void render_area(image& img, const hittable_list& scene, const camera& cam,
 	}
 }
 
-image render_image(const hittable_list& scene, const render_config& conf) {
+image render_image(const scene& sc, const render_config& conf) {
 	// Image
 	image img(conf.image_width, conf.image_height);
 
@@ -77,7 +78,7 @@ image render_image(const hittable_list& scene, const render_config& conf) {
 	const unsigned int n_blocks = n_x_blocks * n_y_blocks;
 
 	for (unsigned int thread = 0; thread < conf.n_threads; thread++) {
-		future_vector.emplace_back(std::async([=, &block_counter, &img, &scene, &cam]() {
+		future_vector.emplace_back(std::async([=, &block_counter, &img, &sc, &cam]() {
 			while (true) {
 				unsigned int block = block_counter++;
 				if (block >= n_blocks)
@@ -89,7 +90,7 @@ image render_image(const hittable_list& scene, const render_config& conf) {
 				unsigned int y_start = y_block * conf.block_height;
 				unsigned int y_end = std::min(y_start + conf.block_height, img.height);
 
-				render_area(img, scene, cam, conf.samples_per_pixel, max_depth, x_start, x_end, y_start, y_end);
+				render_area(img, sc, cam, conf.samples_per_pixel, max_depth, x_start, x_end, y_start, y_end);
 			}
 			}));
 	}

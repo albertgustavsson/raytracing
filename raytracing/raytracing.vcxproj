@@ -142,7 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
-    <ClCompile Include="hittable_list.cpp" />
+    <ClCompile Include="scene.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="materials.cpp" />
     <ClCompile Include="ray.cpp" />
@@ -164,7 +164,7 @@
     <ClInclude Include="triangle.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="hittable.h" />
-    <ClInclude Include="hittable_list.h" />
+    <ClInclude Include="scene.h" />
     <ClInclude Include="image.h" />
     <ClInclude Include="color.h" />
     <ClInclude Include="ray.h" />

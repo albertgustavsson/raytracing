@@ -6,7 +6,7 @@
 #include "image.h"
 #include "color.h"
 #include "camera.h"
-#include "hittable_list.h"
+#include "scene.h"
 #include "sphere.h"
 #include "triangle.h"
 #include "materials.h"
@@ -14,7 +14,7 @@
 #include "renderer.h"
 
 int main() {
-	hittable_list scene = random_scene_triangles();
+	scene sc = random_scene_triangles();
 
 	double aspect_ratio = 3.0 / 2.0;
 	unsigned int image_width = 1200;
@@ -31,7 +31,7 @@ int main() {
 		.block_width = block_width,
 		.block_height = block_height};
 
-	image img = render_image(scene, conf);
+	image img = render_image(sc, conf);
 
 	img.save_to_file("image.ppm");
 }

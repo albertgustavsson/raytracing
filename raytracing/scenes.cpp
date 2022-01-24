@@ -1,13 +1,13 @@
 #include "scenes.h"
-#include "hittable_list.h"
+#include "scene.h"
 #include "sphere.h"
 #include "triangle.h"
 #include "materials.h"
 #include "vector3.h"
 #include "utils.h"
 
-hittable_list random_scene_balls_only() {
-	hittable_list scene;
+scene random_scene_balls_only() {
+	scene sc;
 
 	for (int a = -11; a < 11; a++) {
 		for (int b = -11; b < 11; b++) {
@@ -32,34 +32,34 @@ hittable_list random_scene_balls_only() {
 					// glass
 					sphere_material = std::make_shared<dielectric>(1.5);
 				}
-				scene.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+				sc.add(std::make_shared<sphere>(center, 0.2, sphere_material));
 			}
 		}
 	}
 
 	auto material1 = std::make_shared<dielectric>(1.5);
-	scene.add(std::make_shared<sphere>(vector3(0, 1, 0), 1.0, material1));
+	sc.add(std::make_shared<sphere>(vector3(0, 1, 0), 1.0, material1));
 
 	auto material2 = std::make_shared<lambertian>(rgb_color(0.4, 0.2, 0.1));
-	scene.add(std::make_shared<sphere>(vector3(-4, 1, 0), 1.0, material2));
+	sc.add(std::make_shared<sphere>(vector3(-4, 1, 0), 1.0, material2));
 
 	auto material3 = std::make_shared<metal>(rgb_color(0.7, 0.6, 0.5), 0.0);
-	scene.add(std::make_shared<sphere>(vector3(4, 1, 0), 1.0, material3));
+	sc.add(std::make_shared<sphere>(vector3(4, 1, 0), 1.0, material3));
 
-	return scene;
+	return sc;
 }
 
-hittable_list random_scene() {
-	hittable_list scene = random_scene_balls_only();
+scene random_scene() {
+	scene sc = random_scene_balls_only();
 
 	std::shared_ptr<lambertian> ground_material = std::make_shared<lambertian>(rgb_color(0.5, 0.5, 0.5));
-	scene.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, ground_material));
+	sc.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, ground_material));
 
-	return scene;
+	return sc;
 }
 
-hittable_list random_scene_triangles() {
-	hittable_list scene = random_scene_balls_only();
+scene random_scene_triangles() {
+	scene sc = random_scene_balls_only();
 
 	std::shared_ptr<lambertian> ground_material = std::make_shared<lambertian>(rgb_color(0.5, 0.5, 0.5));
 	const int half_side = 15;
@@ -67,17 +67,17 @@ hittable_list random_scene_triangles() {
 	vector3 corner1(-half_side, 0, half_side);
 	vector3 corner2(half_side, 0, -half_side);
 	vector3 corner3(half_side, 0, half_side);
-	scene.add(std::make_shared<triangle>(corner0, corner1, corner2, ground_material));
-	scene.add(std::make_shared<triangle>(corner1, corner3, corner2, ground_material));
+	sc.add(std::make_shared<triangle>(corner0, corner1, corner2, ground_material));
+	sc.add(std::make_shared<triangle>(corner1, corner3, corner2, ground_material));
 
-	return scene;
+	return sc;
 }
 
-hittable_list random_scene_checker() {
-	hittable_list scene = random_scene_balls_only();
+scene random_scene_checker() {
+	scene sc = random_scene_balls_only();
 
 	std::shared_ptr<checker_texture> checker = std::make_shared<checker_texture>(rgb_color(0.2, 0.3, 0.1), rgb_color(0.9, 0.9, 0.9));
-	scene.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, std::make_shared<lambertian>(checker)));
+	sc.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, std::make_shared<lambertian>(checker)));
 
-	return scene;
+	return sc;
 }

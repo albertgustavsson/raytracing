@@ -3,10 +3,9 @@
 #include <vector>
 #include "hittable.h"
 
-// TODO: rename
-class hittable_list : public hittable {
+class scene : public hittable {
 public:
-    hittable_list() {}
+    scene() {}
 
     void clear() { objects.clear(); }
     void add(std::shared_ptr<hittable> object) { objects.push_back(object); }

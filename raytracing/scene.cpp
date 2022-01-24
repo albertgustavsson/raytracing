@@ -1,6 +1,6 @@
-#include "hittable_list.h"
+#include "scene.h"
 
-bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+bool scene::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
     hit_record temp_rec;
     bool hit_anything = false;
     double closest_so_far = t_max;
