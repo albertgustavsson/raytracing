@@ -28,21 +28,18 @@ rgb_color ray_color(const ray& r, const scene& sc, unsigned int depth) {
 	return (1.0 - t) * background1 + t * background2;
 }
 
-void render_area(image& img, const scene& sc, const camera& cam,
-	const unsigned int samples_per_pixel, const unsigned int max_depth,
-	const unsigned int x_start, const unsigned int x_end,
-	const unsigned int y_start, const unsigned int y_end) {
-
-	for (unsigned int y = y_start; y < y_end; y++) {
-		for (unsigned int x = x_start; x < x_end; x++) {
+void render_area(image& img, const scene& sc,
+		const render_config& rc, const block_config& bc) {
+	for (unsigned int y = bc.y_start; y < bc.y_end; y++) {
+		for (unsigned int x = bc.x_start; x < bc.x_end; x++) {
 			rgb_color pixel_color = rgb_color(0, 0, 0);
-			for (unsigned int s = 0; s < samples_per_pixel; s++) {
+			for (unsigned int s = 0; s < rc.samples_per_pixel; s++) {
 				double u = (x + random_double()) / (img.width - 1);
 				double v = (y + random_double()) / (img.height - 1);
-				ray r = cam.get_ray(u, v);
-				pixel_color += ray_color(r, sc, max_depth);
+				ray r = rc.cam.get_ray(u, v);
+				pixel_color += ray_color(r, sc, rc.max_depth);
 			}
-			pixel_color /= samples_per_pixel;
+			pixel_color /= rc.samples_per_pixel;
 			pixel_color.apply_gamma_correction(1.0 / 2.2);
 
 			unsigned int row = img.height - 1 - y;
@@ -56,18 +53,6 @@ image render_image(const scene& sc, const render_config& conf) {
 	// Image
 	image img(conf.image_width, conf.image_height);
 
-	// Camera
-	vector3 lookfrom(13, 2, 3);
-	vector3 lookat(0, 0, 0);
-	vector3 vup(0, 1, 0);
-	double dist_to_focus = 10.0;
-	double aperture = 0.01;
-	const double aspect_ratio = (double)conf.image_width / conf.image_height;
-
-	camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus);
-
-	const unsigned int max_depth = 50;
-
 	timer t("Rendering image");
 	std::cout << "Rendering " << img.width << "x" << img.height << " image" << std::endl;
 
@@ -78,7 +63,7 @@ image render_image(const scene& sc, const render_config& conf) {
 	const unsigned int n_blocks = n_x_blocks * n_y_blocks;
 
 	for (unsigned int thread = 0; thread < conf.n_threads; thread++) {
-		future_vector.emplace_back(std::async([=, &block_counter, &img, &sc, &cam]() {
+		future_vector.emplace_back(std::async([=, &block_counter, &img, &sc, &conf]() {
 			while (true) {
 				unsigned int block = block_counter++;
 				if (block >= n_blocks)
@@ -89,8 +74,13 @@ image render_image(const scene& sc, const render_config& conf) {
 				unsigned int x_end = std::min(x_start + conf.block_width, img.width);
 				unsigned int y_start = y_block * conf.block_height;
 				unsigned int y_end = std::min(y_start + conf.block_height, img.height);
+				block_config bc = {
+					.x_start = x_start,
+					.x_end = x_end,
+					.y_start = y_start,
+					.y_end = y_end};
 
-				render_area(img, sc, cam, conf.samples_per_pixel, max_depth, x_start, x_end, y_start, y_end);
+				render_area(img, sc, conf, bc);
 			}
 			}));
 	}
