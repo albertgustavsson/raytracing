@@ -14,7 +14,7 @@
 #include "renderer.h"
 
 int main() {
-	scene sc = random_scene_triangles();
+	scene sc = random_scene_light();
 	
 	// Camera
 	vector3 lookfrom(13, 2, 3);
@@ -32,10 +32,10 @@ int main() {
 		.image_height = image_height,
 		.block_width = 32,
 		.block_height = 32,
-		.samples_per_pixel = 100,
+		.samples_per_pixel = 500,
 		.n_threads = std::thread::hardware_concurrency(),
 		.max_depth = 50,
-		.background_color = rgb_color(0.75,0.85,1.0),
+		.background_color = rgb_color(), //rgb_color(0.75, 0.85, 1.0),
 		.cam = camera(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus)};
 
 	image img = render_image(sc, conf);

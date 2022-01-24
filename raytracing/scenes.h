@@ -5,3 +5,4 @@ scene random_scene_balls_only();
 scene random_scene();
 scene random_scene_triangles();
 scene random_scene_checker();
+scene random_scene_light();

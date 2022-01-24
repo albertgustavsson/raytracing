@@ -3,8 +3,9 @@
 #include "color.h"
 #include "utils.h"
 
-rgb_color::rgb_color() : r(0.0), g(0.0), b(0.0) {}
+rgb_color::rgb_color() : rgb_color(0, 0, 0) {}
 rgb_color::rgb_color(double r, double g, double b) : r(r), g(g), b(b) {}
+rgb_color::rgb_color(double i) : rgb_color(i, i, i) {}
 
 rgb_color rgb_color::random() {
 	return rgb_color(random_double(), random_double(), random_double());

@@ -37,13 +37,13 @@ scene random_scene_balls_only() {
 		}
 	}
 
-	auto material1 = std::make_shared<dielectric>(1.5);
+	std::shared_ptr<material> material1 = std::make_shared<dielectric>(1.5);
 	sc.add(std::make_shared<sphere>(vector3(0, 1, 0), 1.0, material1));
 
-	auto material2 = std::make_shared<lambertian>(rgb_color(0.4, 0.2, 0.1));
+	std::shared_ptr<material> material2 = std::make_shared<lambertian>(rgb_color(0.4, 0.2, 0.1));
 	sc.add(std::make_shared<sphere>(vector3(-4, 1, 0), 1.0, material2));
 
-	auto material3 = std::make_shared<metal>(rgb_color(0.7, 0.6, 0.5), 0.0);
+	std::shared_ptr<material> material3 = std::make_shared<metal>(rgb_color(0.7, 0.6, 0.5), 0.0);
 	sc.add(std::make_shared<sphere>(vector3(4, 1, 0), 1.0, material3));
 
 	return sc;
@@ -78,6 +78,16 @@ scene random_scene_checker() {
 
 	std::shared_ptr<checker_texture> checker = std::make_shared<checker_texture>(rgb_color(0.2, 0.3, 0.1), rgb_color(0.9, 0.9, 0.9));
 	sc.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, std::make_shared<lambertian>(checker)));
+
+	return sc;
+}
+
+scene random_scene_light() {
+	scene sc = random_scene_triangles();
+
+	const double brightness = 5.0;
+	std::shared_ptr<diffuse_light> light_material = std::make_shared<diffuse_light>(rgb_color(brightness));
+	sc.add(std::make_shared<sphere>(vector3(20, 15, 25), 15, light_material));
 
 	return sc;
 }
