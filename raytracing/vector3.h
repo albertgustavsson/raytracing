@@ -13,6 +13,8 @@ public:
     static vector3 random_unit_vector();
     static vector3 random_in_hemisphere(const vector3& normal);
 
+    double operator[](unsigned int i) const { return (i == 0 ? x : (i == 1 ? y : z)); }
+    double& operator[](unsigned int i) { return (i == 0 ? x : (i == 1 ? y : z)); }
     vector3 operator-() const;
     vector3& operator+=(const vector3& v);
     vector3& operator-=(const vector3& v);
