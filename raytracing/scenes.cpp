@@ -58,18 +58,25 @@ scene random_scene() {
 	return sc;
 }
 
-scene random_scene_triangles() {
-	scene sc = random_scene_balls_only();
+scene random_scene_triangles_only() {
+	scene sc;
 
 	std::shared_ptr<lambertian> ground_material = std::make_shared<lambertian>(rgb_color(0.5));
 	const int half_side = 15;
-	vector3 corner0(-half_side, 0, -half_side);
-	vector3 corner1(-half_side, 0, half_side);
-	vector3 corner2(half_side, 0, -half_side);
-	vector3 corner3(half_side, 0, half_side);
-	sc.add(std::make_shared<triangle>(corner0, corner1, corner2, ground_material));
-	sc.add(std::make_shared<triangle>(corner1, corner3, corner2, ground_material));
+	vector3 corners[4] = {
+		{ -half_side, 0, -half_side },
+		{ -half_side, 0,  half_side },
+		{  half_side, 0, -half_side },
+		{  half_side, 0,  half_side } };
+	sc.add(std::make_shared<triangle>(corners[0], corners[1], corners[2], ground_material));
+	sc.add(std::make_shared<triangle>(corners[1], corners[3], corners[2], ground_material));
 
+	return sc;
+}
+
+scene random_scene_triangles() {
+	scene sc = random_scene_triangles_only();
+	sc.add(std::make_shared<scene>(random_scene_balls_only()));
 	return sc;
 }
 
