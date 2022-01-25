@@ -14,17 +14,23 @@
 #include "renderer.h"
 
 int main() {
-	scene sc = random_scene_light();
+	scene sc = cornell_box();
 	
 	// Camera
-	vector3 lookfrom(13, 2, 3);
-	vector3 lookat(0, 0, 0);
+	//vector3 lookfrom(13, 2, 3);
+	vector3 lookfrom(278, 278, -800);
+	//vector3 lookat(0, 0, 0);
+	vector3 lookat(278, 278, 0);
 	vector3 vup(0, 1, 0);
-	double dist_to_focus = 128.0/sqrt(182.0); // Distance to edge of closest big sphere
+	//double vfov = 20;
+	double vfov = 40;
+	//double aspect_ratio = 3.0 / 2.0;
+	double aspect_ratio = 1.0;
 	double aperture = 0.01;
+	//double dist_to_focus = 128.0/sqrt(182.0); // Distance to edge of closest big sphere
+	double dist_to_focus = (lookat - lookfrom).length();
 
-	double aspect_ratio = 3.0 / 2.0;
-	unsigned int image_width = 1200;
+	unsigned int image_width = 600;
 	unsigned int image_height = (unsigned int)((double)image_width / aspect_ratio);
 	
 	render_config conf = {
@@ -36,7 +42,7 @@ int main() {
 		.n_threads = std::thread::hardware_concurrency(),
 		.max_depth = 50,
 		.background_color = rgb_color(0), //rgb_color(0.75, 0.85, 1.0),
-		.cam = camera(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus)};
+		.cam = camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus)};
 
 	image img = render_image(sc, conf);
 

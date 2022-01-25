@@ -19,4 +19,7 @@ These images show the effect of changing the aperture of the camera. The images 
 
 ### Emissive materials
 Below, the background was set to black and an emissive sphere was added as a light source:  
-<img src="images/1k2-500spp-ap0_01-lights.png" alt="Camera with aperture=0.01" width="60%"/>
+<img src="images/1k2-500spp-ap0_01-lights.png" alt="Emissive sphere as light source" width="60%"/>
+
+Here is an image depicting the Cornell box:  
+<img src="images/600-500spp-cornell_box.png" alt="Cornell box" width="50%"/>

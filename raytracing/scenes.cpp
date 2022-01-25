@@ -85,9 +85,62 @@ scene random_scene_checker() {
 scene random_scene_light() {
 	scene sc = random_scene_triangles();
 
-	const double brightness = 5.0;
-	std::shared_ptr<diffuse_light> light_material = std::make_shared<diffuse_light>(rgb_color(brightness));
+	std::shared_ptr<diffuse_light> light_material = std::make_shared<diffuse_light>(rgb_color(5));
 	sc.add(std::make_shared<sphere>(vector3(20, 15, 25), 15, light_material));
+
+	return sc;
+}
+
+scene cornell_box() {
+	scene sc;
+
+	std::shared_ptr<lambertian> red =   std::make_shared<lambertian>(rgb_color(0.65, 0.05, 0.05));
+	std::shared_ptr<lambertian> white = std::make_shared<lambertian>(rgb_color(0.73, 0.73, 0.73));
+	std::shared_ptr<lambertian> green = std::make_shared<lambertian>(rgb_color(0.12, 0.45, 0.15));
+	std::shared_ptr<diffuse_light> light = std::make_shared<diffuse_light>(rgb_color(15));
+
+	const double box_size = 555;
+	vector3 box_corners[8] = {
+		{0,        0,        0},
+		{box_size, 0,        0},
+		{0,        box_size, 0},
+		{box_size, box_size, 0},
+		{0,        0,        box_size},
+		{box_size, 0,        box_size},
+		{0,        box_size, box_size},
+		{box_size, box_size, box_size},
+	};
+
+	vector3 light_corners[4] = {
+		{213, box_size - 1, 227},
+		{343, box_size - 1, 227},
+		{213, box_size - 1, 332},
+		{343, box_size - 1, 332},
+	};
+
+	// Back wall
+	sc.add(std::make_shared<triangle>(box_corners[4], box_corners[5], box_corners[6], white));
+	sc.add(std::make_shared<triangle>(box_corners[5], box_corners[6], box_corners[7], white));
+	
+	// Floor
+	sc.add(std::make_shared<triangle>(box_corners[0], box_corners[1], box_corners[4], white));
+	sc.add(std::make_shared<triangle>(box_corners[1], box_corners[4], box_corners[5], white));
+	
+	// Ceiling
+	sc.add(std::make_shared<triangle>(box_corners[2], box_corners[3], box_corners[6], white));
+	sc.add(std::make_shared<triangle>(box_corners[3], box_corners[6], box_corners[7], white));
+	
+	// Left wall
+	sc.add(std::make_shared<triangle>(box_corners[1], box_corners[3], box_corners[5], green));
+	sc.add(std::make_shared<triangle>(box_corners[3], box_corners[5], box_corners[7], green));
+
+	// Right wall
+	sc.add(std::make_shared<triangle>(box_corners[0], box_corners[2], box_corners[4], red));
+	sc.add(std::make_shared<triangle>(box_corners[2], box_corners[4], box_corners[6], red));
+	
+	// Light
+	sc.add(std::make_shared<triangle>(light_corners[0], light_corners[1], light_corners[2], light));
+	sc.add(std::make_shared<triangle>(light_corners[1], light_corners[2], light_corners[3], light));
 
 	return sc;
 }
