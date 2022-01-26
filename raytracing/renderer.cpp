@@ -33,7 +33,7 @@ void render_area(image& img, const scene& sc,
 				double u = (x + random_double()) / (img.width - 1);
 				double v = (y + random_double()) / (img.height - 1);
 				ray r = sc.cam.get_ray(u, v);
-				pixel_color += ray_color(r, sc.background, sc.bvh_root, rc.max_depth);
+				pixel_color += ray_color(r, sc.background, sc.objects, rc.max_depth);
 			}
 			pixel_color /= rc.samples_per_pixel;
 			pixel_color.apply_gamma_correction(1.0 / 2.2);
