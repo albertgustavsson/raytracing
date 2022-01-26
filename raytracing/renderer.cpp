@@ -36,7 +36,7 @@ void render_area(image& img, const scene& sc,
 				pixel_color += ray_color(r, sc.background, sc.objects, rc.max_depth);
 			}
 			pixel_color /= rc.samples_per_pixel;
-			pixel_color.apply_gamma_correction(1.0 / 2.2);
+			pixel_color.apply_gamma_correction(rc.gamma_correction);
 
 			unsigned int row = img.height - 1 - y;
 			unsigned long int index = img.width * row + x;

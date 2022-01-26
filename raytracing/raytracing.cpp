@@ -17,7 +17,8 @@ int main() {
 		.block_height = 32,
 		.samples_per_pixel = 100,
 		.n_threads = std::thread::hardware_concurrency(),
-		.max_depth = 50 };
+		.max_depth = 50,
+		.gamma_correction = 1.0 / 2.2 };
 
 	image img = render_image(sc, conf);
 

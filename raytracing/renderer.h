@@ -12,6 +12,7 @@ struct render_config {
 	unsigned int samples_per_pixel;
 	unsigned int n_threads;
 	unsigned int max_depth;
+	double gamma_correction;
 };
 
 struct block_config {
