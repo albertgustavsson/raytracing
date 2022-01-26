@@ -5,9 +5,22 @@
 #include "materials.h"
 #include "vector3.h"
 #include "utils.h"
+#include "camera.h"
+#include "scene.h"
 
-hittable_list random_scene_balls_only() {
-	hittable_list sc;
+camera random_scene_camera() {
+	vector3 lookfrom(13, 2, 3);
+	vector3 lookat(0, 0, 0);
+	vector3 vup(0, 1, 0);
+	double vfov = 20;
+	double aspect_ratio = 3.0 / 2.0;
+	double aperture = 0.01;
+	double dist_to_focus = 128.0 / sqrt(182.0); // Distance to edge of closest big sphere
+	return camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus);
+}
+
+hittable_list random_spheres() {
+	hittable_list spheres;
 
 	for (int a = -11; a < 11; a++) {
 		for (int b = -11; b < 11; b++) {
@@ -32,34 +45,34 @@ hittable_list random_scene_balls_only() {
 					// glass
 					sphere_material = std::make_shared<dielectric>(1.5);
 				}
-				sc.add(std::make_shared<sphere>(center, 0.2, sphere_material));
+				spheres.add(std::make_shared<sphere>(center, 0.2, sphere_material));
 			}
 		}
 	}
 
 	std::shared_ptr<material> material1 = std::make_shared<dielectric>(1.5);
-	sc.add(std::make_shared<sphere>(vector3(0, 1, 0), 1, material1));
+	spheres.add(std::make_shared<sphere>(vector3(0, 1, 0), 1, material1));
 
 	std::shared_ptr<material> material2 = std::make_shared<lambertian>(rgb_color(0.4, 0.2, 0.1));
-	sc.add(std::make_shared<sphere>(vector3(-4, 1, 0), 1, material2));
+	spheres.add(std::make_shared<sphere>(vector3(-4, 1, 0), 1, material2));
 
 	std::shared_ptr<material> material3 = std::make_shared<metal>(rgb_color(0.7, 0.6, 0.5), 0);
-	sc.add(std::make_shared<sphere>(vector3(4, 1, 0), 1, material3));
+	spheres.add(std::make_shared<sphere>(vector3(4, 1, 0), 1, material3));
 
-	return sc;
+	return spheres;
 }
 
-hittable_list random_scene() {
-	hittable_list sc = random_scene_balls_only();
+scene random_scene() {
+	hittable_list hittables = random_spheres();
 
 	std::shared_ptr<lambertian> ground_material = std::make_shared<lambertian>(rgb_color(0.5));
-	sc.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, ground_material));
+	hittables.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, ground_material));
 
-	return sc;
+	return scene(hittables, random_scene_camera(), rgb_color(0.75, 0.85, 1.00));
 }
 
-hittable_list random_scene_triangles_only() {
-	hittable_list sc;
+hittable_list floor_triangles() {
+	hittable_list triangles;
 
 	std::shared_ptr<lambertian> ground_material = std::make_shared<lambertian>(rgb_color(0.5));
 	const int half_side = 15;
@@ -68,42 +81,42 @@ hittable_list random_scene_triangles_only() {
 		{ -half_side, 0,  half_side },
 		{  half_side, 0, -half_side },
 		{  half_side, 0,  half_side } };
-	sc.add(std::make_shared<triangle>(corners[0], corners[1], corners[2], ground_material));
-	sc.add(std::make_shared<triangle>(corners[1], corners[3], corners[2], ground_material));
+	triangles.add(std::make_shared<triangle>(corners[0], corners[1], corners[2], ground_material));
+	triangles.add(std::make_shared<triangle>(corners[1], corners[3], corners[2], ground_material));
 
-	return sc;
+	return triangles;
 }
 
-hittable_list random_scene_triangles() {
-	hittable_list sc = random_scene_balls_only();
+scene random_scene_triangles() {
+	hittable_list hittables = random_spheres();
 
-	sc.add(random_scene_triangles_only().objects);
+	hittables.add(floor_triangles().objects);
 	
-	return sc;
+	return scene(hittables, random_scene_camera(), rgb_color(0.75, 0.85, 1.00));
 }
 
-hittable_list random_scene_checker() {
-	hittable_list sc = random_scene_balls_only();
+scene random_scene_checker() {
+	hittable_list hittables = random_spheres();
 
 	std::shared_ptr<checker_texture> checker = std::make_shared<checker_texture>(rgb_color(0.2, 0.3, 0.1), rgb_color(0.9));
-	sc.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, std::make_shared<lambertian>(checker)));
+	hittables.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, std::make_shared<lambertian>(checker)));
 
-	return sc;
+	return scene(hittables, random_scene_camera(), rgb_color(0.75, 0.85, 1.00));
 }
 
-hittable_list random_scene_light() {
-	hittable_list sc = random_scene_triangles();
+scene random_scene_light() {
+	hittable_list hittables = random_spheres();
+	hittables.add(floor_triangles().objects);
 
 	std::shared_ptr<diffuse_light> light_material = std::make_shared<diffuse_light>(rgb_color(5));
-	sc.add(std::make_shared<sphere>(vector3(20, 15, 25), 15, light_material));
+	hittables.add(std::make_shared<sphere>(vector3(20, 15, 25), 15, light_material));
 
-	return sc;
+	return scene(hittables, random_scene_camera());
 }
 
 hittable_list cornell_box() {
-	hittable_list sc;
 
-	std::shared_ptr<lambertian> red =   std::make_shared<lambertian>(rgb_color(0.65, 0.05, 0.05));
+	std::shared_ptr<lambertian> red = std::make_shared<lambertian>(rgb_color(0.65, 0.05, 0.05));
 	std::shared_ptr<lambertian> white = std::make_shared<lambertian>(rgb_color(0.73, 0.73, 0.73));
 	std::shared_ptr<lambertian> green = std::make_shared<lambertian>(rgb_color(0.12, 0.45, 0.15));
 	std::shared_ptr<diffuse_light> light = std::make_shared<diffuse_light>(rgb_color(15));
@@ -127,29 +140,46 @@ hittable_list cornell_box() {
 		{343, box_size - 1, 332},
 	};
 
+	hittable_list triangles;
 	// Back wall
-	sc.add(std::make_shared<triangle>(box_corners[4], box_corners[5], box_corners[6], white));
-	sc.add(std::make_shared<triangle>(box_corners[5], box_corners[6], box_corners[7], white));
-	
+	triangles.add(std::make_shared<triangle>(box_corners[4], box_corners[5], box_corners[6], white));
+	triangles.add(std::make_shared<triangle>(box_corners[5], box_corners[6], box_corners[7], white));
+
 	// Floor
-	sc.add(std::make_shared<triangle>(box_corners[0], box_corners[1], box_corners[4], white));
-	sc.add(std::make_shared<triangle>(box_corners[1], box_corners[4], box_corners[5], white));
-	
+	triangles.add(std::make_shared<triangle>(box_corners[0], box_corners[1], box_corners[4], white));
+	triangles.add(std::make_shared<triangle>(box_corners[1], box_corners[4], box_corners[5], white));
+
 	// Ceiling
-	sc.add(std::make_shared<triangle>(box_corners[2], box_corners[3], box_corners[6], white));
-	sc.add(std::make_shared<triangle>(box_corners[3], box_corners[6], box_corners[7], white));
-	
+	triangles.add(std::make_shared<triangle>(box_corners[2], box_corners[3], box_corners[6], white));
+	triangles.add(std::make_shared<triangle>(box_corners[3], box_corners[6], box_corners[7], white));
+
 	// Left wall
-	sc.add(std::make_shared<triangle>(box_corners[1], box_corners[3], box_corners[5], green));
-	sc.add(std::make_shared<triangle>(box_corners[3], box_corners[5], box_corners[7], green));
+	triangles.add(std::make_shared<triangle>(box_corners[1], box_corners[3], box_corners[5], green));
+	triangles.add(std::make_shared<triangle>(box_corners[3], box_corners[5], box_corners[7], green));
 
 	// Right wall
-	sc.add(std::make_shared<triangle>(box_corners[0], box_corners[2], box_corners[4], red));
-	sc.add(std::make_shared<triangle>(box_corners[2], box_corners[4], box_corners[6], red));
-	
-	// Light
-	sc.add(std::make_shared<triangle>(light_corners[0], light_corners[1], light_corners[2], light));
-	sc.add(std::make_shared<triangle>(light_corners[1], light_corners[2], light_corners[3], light));
+	triangles.add(std::make_shared<triangle>(box_corners[0], box_corners[2], box_corners[4], red));
+	triangles.add(std::make_shared<triangle>(box_corners[2], box_corners[4], box_corners[6], red));
 
-	return sc;
+	// Light
+	triangles.add(std::make_shared<triangle>(light_corners[0], light_corners[1], light_corners[2], light));
+	triangles.add(std::make_shared<triangle>(light_corners[1], light_corners[2], light_corners[3], light));
+
+	return triangles;
+}
+
+scene cornell_box_scene() {
+	hittable_list hittables = cornell_box();
+
+	// Cornell box camera
+	vector3 lookfrom(278, 278, -800);
+	vector3 lookat(278, 278, 0);
+	vector3 vup(0, 1, 0);
+	double vfov = 40;
+	double aspect_ratio = 1.0;
+	double aperture = 0.01;
+	double dist_to_focus = (lookat - lookfrom).length();
+	camera cam(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus);
+	
+	return scene(hittables, cam);
 }

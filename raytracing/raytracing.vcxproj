@@ -163,6 +163,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="materials.h" />
     <ClInclude Include="renderer.h" />
+    <ClInclude Include="scene.h" />
     <ClInclude Include="scenes.h" />
     <ClInclude Include="textures.h" />
     <ClInclude Include="triangle.h" />

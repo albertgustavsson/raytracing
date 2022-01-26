@@ -1,44 +1,14 @@
-#include <iostream>
-#include <iomanip>
 #include <thread>
-#include <future>
-#include "utils.h"
 #include "image.h"
-#include "color.h"
-#include "camera.h"
-#include "hittable_list.h"
-#include "sphere.h"
-#include "triangle.h"
-#include "materials.h"
-#include "scenes.h"
+#include "scene.h"
 #include "renderer.h"
-#include "bvh_node.h"
+#include "scenes.h"
 
 int main() {
-	hittable_list sc(std::make_shared<bvh_node>(random_scene_light()));
+	scene sc = random_scene();
 
-	// TODO: move camera setup to scene class, and define for each scene in scenes.cpp
-	// Camera
-	vector3 lookfrom(13, 2, 3);
-	vector3 lookat(0, 0, 0);
-	vector3 vup(0, 1, 0);
-	double vfov = 20;
-	double aspect_ratio = 3.0 / 2.0;
-	double aperture = 0.01;
-	double dist_to_focus = 128.0/sqrt(182.0); // Distance to edge of closest big sphere
-	//double dist_to_focus = (lookat - lookfrom).length();
-	
-	// Cornell box camera
-	//vector3 lookfrom(278, 278, -800);
-	//vector3 lookat(278, 278, 0);
-	//vector3 vup(0, 1, 0);
-	//double vfov = 40;
-	//double aspect_ratio = 1.0;
-	//double aperture = 0.01;
-	//double dist_to_focus = (lookat - lookfrom).length();
-
-	unsigned int image_width = 900;
-	unsigned int image_height = (unsigned int)((double)image_width / aspect_ratio);
+	unsigned int image_width = 1200;
+	unsigned int image_height = (unsigned int)((double)image_width / sc.cam.ar);
 	
 	render_config conf = {
 		.image_width = image_width,
@@ -47,9 +17,7 @@ int main() {
 		.block_height = 32,
 		.samples_per_pixel = 100,
 		.n_threads = std::thread::hardware_concurrency(),
-		.max_depth = 50,
-		.background_color = rgb_color(0), //rgb_color(0.75, 0.85, 1.0),
-		.cam = camera(lookfrom, lookat, vup, vfov, aspect_ratio, aperture, dist_to_focus)};
+		.max_depth = 50 };
 
 	image img = render_image(sc, conf);
 

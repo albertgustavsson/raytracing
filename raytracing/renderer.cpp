@@ -2,17 +2,18 @@
 #include <future>
 #include <iomanip>
 #include "renderer.h"
-#include "hittable_list.h"
+#include "hittable.h"
 #include "utils.h"
 #include "materials.h"
+#include "scene.h"
 
-rgb_color ray_color(const ray& r, const rgb_color& background, const hittable_list& sc, unsigned int depth) {
+rgb_color ray_color(const ray& r, const rgb_color& background, const hittable& h, unsigned int depth) {
 	// If we've exceeded the ray bounce limit, no more light is gathered.
 	if (depth <= 0)
 		return rgb_color(0);
 
 	hit_record rec;
-	if (!sc.hit(r, 0.000001, infinity, rec))
+	if (!h.hit(r, 0.000001, infinity, rec))
 		return background;
 	
 	ray scattered;
@@ -20,10 +21,10 @@ rgb_color ray_color(const ray& r, const rgb_color& background, const hittable_li
 	rgb_color emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
 	if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
 		return emitted;
-	return emitted + attenuation * ray_color(scattered, background, sc, depth - 1);
+	return emitted + attenuation * ray_color(scattered, background, h, depth - 1);
 }
 
-void render_area(image& img, const hittable_list& sc,
+void render_area(image& img, const scene& sc,
 		const render_config& rc, const block_config& bc) {
 	for (unsigned int y = bc.y_start; y < bc.y_end; y++) {
 		for (unsigned int x = bc.x_start; x < bc.x_end; x++) {
@@ -31,8 +32,8 @@ void render_area(image& img, const hittable_list& sc,
 			for (unsigned int s = 0; s < rc.samples_per_pixel; s++) {
 				double u = (x + random_double()) / (img.width - 1);
 				double v = (y + random_double()) / (img.height - 1);
-				ray r = rc.cam.get_ray(u, v);
-				pixel_color += ray_color(r, rc.background_color, sc, rc.max_depth);
+				ray r = sc.cam.get_ray(u, v);
+				pixel_color += ray_color(r, sc.background, sc.bvh_root, rc.max_depth);
 			}
 			pixel_color /= rc.samples_per_pixel;
 			pixel_color.apply_gamma_correction(1.0 / 2.2);
@@ -44,8 +45,7 @@ void render_area(image& img, const hittable_list& sc,
 	}
 }
 
-image render_image(const hittable_list& sc, const render_config& conf) {
-	// Image
+image render_image(const scene& sc, const render_config& conf) {
 	image img(conf.image_width, conf.image_height);
 
 	timer t("Rendering image");
@@ -77,7 +77,7 @@ image render_image(const hittable_list& sc, const render_config& conf) {
 
 				render_area(img, sc, conf, bc);
 			}
-			}));
+		}));
 	}
 
 	std::future<void> progress_future = std::async([=, &block_counter]() {
@@ -96,7 +96,7 @@ image render_image(const hittable_list& sc, const render_config& conf) {
 
 			std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		}
-		});
+	});
 
 	for (unsigned int thread = 0; thread < conf.n_threads; thread++) future_vector[thread].wait();
 	progress_future.wait();

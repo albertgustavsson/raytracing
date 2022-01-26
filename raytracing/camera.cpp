@@ -6,6 +6,7 @@ camera::camera(vector3 lookfrom, vector3 lookat, vector3 vup, double vfov, doubl
     double h = tan(theta / 2);
     double viewport_height = 2.0 * h;
     double viewport_width = aspect_ratio * viewport_height;
+    ar = aspect_ratio;
 
     w = (lookfrom - lookat).get_normalized();
     u = cross(vup, w).get_normalized();
