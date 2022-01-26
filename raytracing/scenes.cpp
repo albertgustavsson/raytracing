@@ -7,6 +7,7 @@
 #include "utils.h"
 #include "camera.h"
 #include "scene.h"
+#include "quadrilateral.h"
 
 camera random_scene_camera() {
 	vector3 lookfrom(13, 2, 3);
@@ -115,67 +116,106 @@ scene random_scene_light() {
 }
 
 hittable_list cornell_box() {
+	// Wavelengths: R=650nm, G=510nm, B=475nm	
+	rgb_color red_color(0.611, 0.0555, 0.06175);
+	rgb_color green_color(0.117, 0.4125, 0.11425);
+	rgb_color white_color(0.7295, 0.7355, 0.733);
+	rgb_color light_emissive_color = rgb_color(0, 255.0/255, 146.0/255) * 8.0 + rgb_color(255.0/255, 190.0/255, 0) * 15.6 + rgb_color(255.0/255, 0, 0) * 18.4;
 
-	std::shared_ptr<lambertian> red = std::make_shared<lambertian>(rgb_color(0.65, 0.05, 0.05));
-	std::shared_ptr<lambertian> white = std::make_shared<lambertian>(rgb_color(0.73, 0.73, 0.73));
-	std::shared_ptr<lambertian> green = std::make_shared<lambertian>(rgb_color(0.12, 0.45, 0.15));
-	std::shared_ptr<diffuse_light> light = std::make_shared<diffuse_light>(rgb_color(15));
+	std::shared_ptr<lambertian> red = std::make_shared<lambertian>(red_color);
+	std::shared_ptr<lambertian> green = std::make_shared<lambertian>(green_color);
+	std::shared_ptr<lambertian> white = std::make_shared<lambertian>(white_color);
+	std::shared_ptr<diffuse_light> light = std::make_shared<diffuse_light>(light_emissive_color);
 
-	const double box_size = 555;
 	vector3 box_corners[8] = {
-		{0,        0,        0},
-		{box_size, 0,        0},
-		{0,        box_size, 0},
-		{box_size, box_size, 0},
-		{0,        0,        box_size},
-		{box_size, 0,        box_size},
-		{0,        box_size, box_size},
-		{box_size, box_size, box_size},
+		{  0,     0,     0  },
+		{552.8,   0,     0  },
+		{  0,   548.8,   0  },
+		{556.0, 548.8,   0  },
+		{  0,     0,   559.2},
+		{549.6,   0,   559.2},
+		{  0,   548.8, 559.2},
+		{556.0, 548.8, 559.2},
 	};
 
 	vector3 light_corners[4] = {
-		{213, box_size - 1, 227},
-		{343, box_size - 1, 227},
-		{213, box_size - 1, 332},
-		{343, box_size - 1, 332},
+		{213, 548.8 - 0.1, 227},
+		{343, 548.8 - 0.1, 227},
+		{213, 548.8 - 0.1, 332},
+		{343, 548.8 - 0.1, 332},
 	};
 
-	hittable_list triangles;
+	hittable_list hittables;
+	
 	// Back wall
-	triangles.add(std::make_shared<triangle>(box_corners[4], box_corners[5], box_corners[6], white));
-	triangles.add(std::make_shared<triangle>(box_corners[5], box_corners[6], box_corners[7], white));
-
+	hittables.add(std::make_shared<quadrilateral>(box_corners[4], box_corners[5], box_corners[7], box_corners[6], white));
 	// Floor
-	triangles.add(std::make_shared<triangle>(box_corners[0], box_corners[1], box_corners[4], white));
-	triangles.add(std::make_shared<triangle>(box_corners[1], box_corners[4], box_corners[5], white));
-
+	hittables.add(std::make_shared<quadrilateral>(box_corners[0], box_corners[1], box_corners[5], box_corners[4], white));
 	// Ceiling
-	triangles.add(std::make_shared<triangle>(box_corners[2], box_corners[3], box_corners[6], white));
-	triangles.add(std::make_shared<triangle>(box_corners[3], box_corners[6], box_corners[7], white));
-
+	hittables.add(std::make_shared<quadrilateral>(box_corners[2], box_corners[3], box_corners[7], box_corners[6], white));
 	// Left wall
-	triangles.add(std::make_shared<triangle>(box_corners[1], box_corners[3], box_corners[5], green));
-	triangles.add(std::make_shared<triangle>(box_corners[3], box_corners[5], box_corners[7], green));
-
+	hittables.add(std::make_shared<quadrilateral>(box_corners[1], box_corners[3], box_corners[7], box_corners[5], red));
 	// Right wall
-	triangles.add(std::make_shared<triangle>(box_corners[0], box_corners[2], box_corners[4], red));
-	triangles.add(std::make_shared<triangle>(box_corners[2], box_corners[4], box_corners[6], red));
-
+	hittables.add(std::make_shared<quadrilateral>(box_corners[0], box_corners[2], box_corners[6], box_corners[4], green));
 	// Light
-	triangles.add(std::make_shared<triangle>(light_corners[0], light_corners[1], light_corners[2], light));
-	triangles.add(std::make_shared<triangle>(light_corners[1], light_corners[2], light_corners[3], light));
+	hittables.add(std::make_shared<quadrilateral>(light_corners[0], light_corners[1], light_corners[3], light_corners[2], light));
 
-	return triangles;
+	return hittables;
+}
+
+hittable_list cornell_blocks() {
+	rgb_color white_color(0.7295, 0.7355, 0.733);
+	std::shared_ptr<lambertian> white = std::make_shared<lambertian>(white_color);
+
+	hittable_list hittables;
+
+	vector3 short_block_corners[8] = {
+		{130,   0,  65},
+		{290,   0, 114},
+		{130, 165,  65},
+		{290, 165, 114},
+		{ 82,   0, 225},
+		{240,   0, 272},
+		{ 82, 165, 225},
+		{240, 165, 272},
+	};
+	
+	hittables.add(std::make_shared<quadrilateral>(short_block_corners[0], short_block_corners[1], short_block_corners[3], short_block_corners[2], white));
+	hittables.add(std::make_shared<quadrilateral>(short_block_corners[0], short_block_corners[2], short_block_corners[6], short_block_corners[4], white));
+	hittables.add(std::make_shared<quadrilateral>(short_block_corners[1], short_block_corners[3], short_block_corners[7], short_block_corners[5], white));
+	hittables.add(std::make_shared<quadrilateral>(short_block_corners[2], short_block_corners[3], short_block_corners[7], short_block_corners[6], white));
+	hittables.add(std::make_shared<quadrilateral>(short_block_corners[4], short_block_corners[5], short_block_corners[7], short_block_corners[6], white));
+
+	vector3 tall_block_corners[8] = {
+		{265,   0, 296},
+		{423,   0, 247},
+		{265, 330, 296},
+		{423, 330, 247},
+		{314,   0, 456},
+		{472,   0, 406},
+		{314, 330, 456},
+		{472, 330, 406},
+	};
+
+	hittables.add(std::make_shared<quadrilateral>(tall_block_corners[0], tall_block_corners[1], tall_block_corners[3], tall_block_corners[2], white));
+	hittables.add(std::make_shared<quadrilateral>(tall_block_corners[0], tall_block_corners[2], tall_block_corners[6], tall_block_corners[4], white));
+	hittables.add(std::make_shared<quadrilateral>(tall_block_corners[1], tall_block_corners[3], tall_block_corners[7], tall_block_corners[5], white));
+	hittables.add(std::make_shared<quadrilateral>(tall_block_corners[2], tall_block_corners[3], tall_block_corners[7], tall_block_corners[6], white));
+	hittables.add(std::make_shared<quadrilateral>(tall_block_corners[4], tall_block_corners[5], tall_block_corners[7], tall_block_corners[6], white));
+	
+	return hittables;
 }
 
 scene cornell_box_scene() {
+	// Made to match the Cornell box, as described here:
+	// https://www.graphics.cornell.edu/online/box/data.html
 	hittable_list hittables = cornell_box();
+	hittables.add(cornell_blocks().objects);
 
-	// Cornell box camera
-	vector3 lookfrom(278, 278, -800);
-	vector3 lookat(278, 278, 0);
+	vector3 lookfrom(278, 273, -800);
+	vector3 lookat(278, 273, 0);
 	vector3 vup(0, 1, 0);
-	double vfov = 40;
+	double vfov = 39.3;
 	double aspect_ratio = 1.0;
 	double aperture = 0.01;
 	double dist_to_focus = (lookat - lookfrom).length();

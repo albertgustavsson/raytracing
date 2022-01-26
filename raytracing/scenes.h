@@ -9,4 +9,5 @@ scene random_scene_triangles();
 scene random_scene_checker();
 scene random_scene_light();
 hittable_list cornell_box();
+hittable_list cornell_blocks();
 scene cornell_box_scene();

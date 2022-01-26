@@ -5,9 +5,9 @@
 #include "scenes.h"
 
 int main() {
-	scene sc = random_scene();
+	scene sc = cornell_box_scene();
 
-	unsigned int image_width = 1200;
+	unsigned int image_width = 512;
 	unsigned int image_height = (unsigned int)((double)image_width / sc.cam.ar);
 	
 	render_config conf = {
