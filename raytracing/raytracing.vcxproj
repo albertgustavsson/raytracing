@@ -141,6 +141,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="aabb.cpp" />
+    <ClCompile Include="bvh_node.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="image.cpp" />
@@ -156,6 +158,8 @@
     <ClCompile Include="vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="aabb.h" />
+    <ClInclude Include="bvh_node.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="materials.h" />
     <ClInclude Include="renderer.h" />

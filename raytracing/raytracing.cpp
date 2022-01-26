@@ -12,25 +12,32 @@
 #include "materials.h"
 #include "scenes.h"
 #include "renderer.h"
+#include "bvh_node.h"
 
 int main() {
-	scene sc = cornell_box();
-	
-	// Camera
-	//vector3 lookfrom(13, 2, 3);
-	vector3 lookfrom(278, 278, -800);
-	//vector3 lookat(0, 0, 0);
-	vector3 lookat(278, 278, 0);
-	vector3 vup(0, 1, 0);
-	//double vfov = 20;
-	double vfov = 40;
-	//double aspect_ratio = 3.0 / 2.0;
-	double aspect_ratio = 1.0;
-	double aperture = 0.01;
-	//double dist_to_focus = 128.0/sqrt(182.0); // Distance to edge of closest big sphere
-	double dist_to_focus = (lookat - lookfrom).length();
+	scene sc(std::make_shared<bvh_node>(random_scene_light()));
 
-	unsigned int image_width = 600;
+	// TODO: move camera setup to scene class, and define for each scene in scenes.cpp
+	// Camera
+	vector3 lookfrom(13, 2, 3);
+	vector3 lookat(0, 0, 0);
+	vector3 vup(0, 1, 0);
+	double vfov = 20;
+	double aspect_ratio = 3.0 / 2.0;
+	double aperture = 0.01;
+	double dist_to_focus = 128.0/sqrt(182.0); // Distance to edge of closest big sphere
+	//double dist_to_focus = (lookat - lookfrom).length();
+	
+	// Cornell box camera
+	//vector3 lookfrom(278, 278, -800);
+	//vector3 lookat(278, 278, 0);
+	//vector3 vup(0, 1, 0);
+	//double vfov = 40;
+	//double aspect_ratio = 1.0;
+	//double aperture = 0.01;
+	//double dist_to_focus = (lookat - lookfrom).length();
+
+	unsigned int image_width = 900;
 	unsigned int image_height = (unsigned int)((double)image_width / aspect_ratio);
 	
 	render_config conf = {
@@ -38,7 +45,7 @@ int main() {
 		.image_height = image_height,
 		.block_width = 32,
 		.block_height = 32,
-		.samples_per_pixel = 500,
+		.samples_per_pixel = 100,
 		.n_threads = std::thread::hardware_concurrency(),
 		.max_depth = 50,
 		.background_color = rgb_color(0), //rgb_color(0.75, 0.85, 1.0),

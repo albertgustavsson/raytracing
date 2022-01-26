@@ -75,8 +75,10 @@ scene random_scene_triangles_only() {
 }
 
 scene random_scene_triangles() {
-	scene sc = random_scene_triangles_only();
-	sc.add(std::make_shared<scene>(random_scene_balls_only()));
+	scene sc = random_scene_balls_only();
+
+	sc.add(random_scene_triangles_only().objects);
+	
 	return sc;
 }
 

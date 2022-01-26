@@ -22,6 +22,11 @@ inline double random_double(double min, double max) {
 	return min + (max - min) * random_double();
 }
 
+inline int random_int(int min, int max) {
+	// Returns a random integer in [min,max].
+	return static_cast<int>(random_double(static_cast<double>(min), static_cast<double>(max) + 1));
+}
+
 struct timer {
 	std::string name;
 	std::chrono::high_resolution_clock::time_point start, end;

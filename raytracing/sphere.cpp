@@ -30,6 +30,12 @@ bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) cons
     return true;
 }
 
+bool sphere::bounding_box(aabb& output_box) const {
+    vector3 offset(radius, radius, radius);
+    output_box = aabb(center - offset, center + offset);
+    return true;
+}
+
 void sphere::get_sphere_uv(const vector3& p, double& u, double& v) {
     // p: a given point on the sphere of radius one, centered at the origin.
     // u: returned value [0,1] of angle around the Y axis from X=-1.
