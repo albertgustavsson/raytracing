@@ -1,10 +1,10 @@
 #pragma once
-#include "scene.h"
+#include "hittable_list.h"
 
-scene random_scene_balls_only();
-scene random_scene();
-scene random_scene_triangles_only();
-scene random_scene_triangles();
-scene random_scene_checker();
-scene random_scene_light();
-scene cornell_box();
+hittable_list random_scene_balls_only();
+hittable_list random_scene();
+hittable_list random_scene_triangles_only();
+hittable_list random_scene_triangles();
+hittable_list random_scene_checker();
+hittable_list random_scene_light();
+hittable_list cornell_box();

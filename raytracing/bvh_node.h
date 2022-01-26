@@ -1,11 +1,11 @@
 #pragma once
 #include <iostream>
 #include "hittable.h"
-#include "scene.h"
+#include "hittable_list.h"
 
 class bvh_node : public hittable {
 public:
-    bvh_node(const scene& sc) : bvh_node(sc.objects, 0, sc.objects.size()) {}
+    bvh_node(const hittable_list& sc) : bvh_node(sc.objects, 0, sc.objects.size()) {}
     bvh_node(const std::vector<std::shared_ptr<hittable>>& src_objects, size_t start, size_t end);
 
     virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const override;

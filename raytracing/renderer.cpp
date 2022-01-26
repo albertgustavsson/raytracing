@@ -2,11 +2,11 @@
 #include <future>
 #include <iomanip>
 #include "renderer.h"
-#include "scene.h"
+#include "hittable_list.h"
 #include "utils.h"
 #include "materials.h"
 
-rgb_color ray_color(const ray& r, const rgb_color& background, const scene& sc, unsigned int depth) {
+rgb_color ray_color(const ray& r, const rgb_color& background, const hittable_list& sc, unsigned int depth) {
 	// If we've exceeded the ray bounce limit, no more light is gathered.
 	if (depth <= 0)
 		return rgb_color(0);
@@ -23,7 +23,7 @@ rgb_color ray_color(const ray& r, const rgb_color& background, const scene& sc, 
 	return emitted + attenuation * ray_color(scattered, background, sc, depth - 1);
 }
 
-void render_area(image& img, const scene& sc,
+void render_area(image& img, const hittable_list& sc,
 		const render_config& rc, const block_config& bc) {
 	for (unsigned int y = bc.y_start; y < bc.y_end; y++) {
 		for (unsigned int x = bc.x_start; x < bc.x_end; x++) {
@@ -44,7 +44,7 @@ void render_area(image& img, const scene& sc,
 	}
 }
 
-image render_image(const scene& sc, const render_config& conf) {
+image render_image(const hittable_list& sc, const render_config& conf) {
 	// Image
 	image img(conf.image_width, conf.image_height);
 

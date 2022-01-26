@@ -4,7 +4,7 @@
 #include "ray.h"
 #include "camera.h"
 #include "hittable.h"
-#include "scene.h"
+#include "hittable_list.h"
 
 struct render_config {
 	unsigned int image_width, image_height;
@@ -20,9 +20,9 @@ struct block_config {
 	unsigned int x_start, x_end, y_start, y_end;
 };
 
-rgb_color ray_color(const ray& r, const rgb_color& background, const scene& sc, unsigned int depth);
+rgb_color ray_color(const ray& r, const rgb_color& background, const hittable_list& sc, unsigned int depth);
 
-void render_area(image& img, const scene& sc,
+void render_area(image& img, const hittable_list& sc,
 	const render_config& rc, const block_config& bc);
 
-image render_image(const scene& sc, const render_config& conf);
+image render_image(const hittable_list& sc, const render_config& conf);

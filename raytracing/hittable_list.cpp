@@ -1,10 +1,10 @@
-#include "scene.h"
+#include "hittable_list.h"
 
-void scene::add(std::vector<std::shared_ptr<hittable>> obj) {
+void hittable_list::add(std::vector<std::shared_ptr<hittable>> obj) {
     objects.insert(objects.end(), obj.begin(), obj.end());
 }
 
-bool scene::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
     hit_record temp_rec;
     bool hit_anything = false;
     double closest_so_far = t_max;
@@ -20,7 +20,7 @@ bool scene::hit(const ray& r, double t_min, double t_max, hit_record& rec) const
     return hit_anything;
 }
 
-bool scene::bounding_box(aabb& output_box) const
+bool hittable_list::bounding_box(aabb& output_box) const
 {
     if (objects.empty()) return false;
 

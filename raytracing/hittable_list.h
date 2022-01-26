@@ -3,11 +3,11 @@
 #include <vector>
 #include "hittable.h"
 
-class scene : public hittable {
+class hittable_list : public hittable {
 public:
-    scene() {}
-    scene(std::shared_ptr<hittable> object) { add(object); }
-    scene(std::vector<std::shared_ptr<hittable>> objects) { add(objects); }
+    hittable_list() {}
+    hittable_list(std::shared_ptr<hittable> object) { add(object); }
+    hittable_list(std::vector<std::shared_ptr<hittable>> objects) { add(objects); }
 
     void clear() { objects.clear(); }
     void add(std::shared_ptr<hittable> object) { objects.push_back(object); }

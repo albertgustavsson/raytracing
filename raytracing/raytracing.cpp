@@ -6,7 +6,7 @@
 #include "image.h"
 #include "color.h"
 #include "camera.h"
-#include "scene.h"
+#include "hittable_list.h"
 #include "sphere.h"
 #include "triangle.h"
 #include "materials.h"
@@ -15,7 +15,7 @@
 #include "bvh_node.h"
 
 int main() {
-	scene sc(std::make_shared<bvh_node>(random_scene_light()));
+	hittable_list sc(std::make_shared<bvh_node>(random_scene_light()));
 
 	// TODO: move camera setup to scene class, and define for each scene in scenes.cpp
 	// Camera
