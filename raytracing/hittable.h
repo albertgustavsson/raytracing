@@ -5,13 +5,12 @@
 #include "ray.h"
 //#include "materials.h"
 
-// TODO: fix circular dependency
+// TODO: Why is this still necessary?
 class material;
 
-struct hit_record {
+struct hit_point {
 	vector3 p;
 	vector3 normal;
-	std::shared_ptr<material> mat_ptr;
 	double t = -1.0;
 	double u = 0.0, v = 0.0;
 	bool front_face = true;
@@ -21,8 +20,14 @@ struct hit_record {
 	}
 };
 
+struct hit_record {
+	bool did_hit = false;
+	hit_point hp;
+	std::shared_ptr<material> mat_ptr;
+};
+
 class hittable {
 public:
-	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const = 0;
+	virtual hit_record hit(const ray& r, double t_min, double t_max) const = 0;
 	virtual bool bounding_box(aabb& output_box) const = 0;
 };

@@ -8,7 +8,7 @@ public:
 	bvh_node(const hittable_list& sc) : bvh_node(sc.objects, 0, sc.objects.size()) {}
 	bvh_node(const std::vector<std::shared_ptr<hittable>>& src_objects, size_t start, size_t end);
 
-	virtual bool hit(const ray& r, double t_min, double t_max, hit_record& rec) const override;
+	virtual hit_record hit(const ray& r, double t_min, double t_max) const override;
 	virtual bool bounding_box(aabb& output_box) const override;
 
 public:

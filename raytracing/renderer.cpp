@@ -13,14 +13,14 @@ rgb_color ray_color(
 	if (depth <= 0)
 		return rgb_color(0);
 
-	hit_record rec;
-	if (!h.hit(r, 0.000001, infinity, rec))
+	hit_record rec = h.hit(r, 0.000001, infinity);
+	if (!rec.did_hit)
 		return background;
 	
 	ray scattered;
 	rgb_color attenuation;
-	rgb_color emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
-	if (!rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+	rgb_color emitted = rec.mat_ptr->emitted(rec.hp.u, rec.hp.v, rec.hp.p);
+	if (!rec.mat_ptr->scatter(r, rec.hp, attenuation, scattered))
 		return emitted;
 	return emitted + attenuation * ray_color(scattered, background, h, depth - 1);
 }

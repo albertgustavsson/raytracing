@@ -4,20 +4,19 @@ void hittable_list::add(std::vector<std::shared_ptr<hittable>> obj) {
 	objects.insert(objects.end(), obj.begin(), obj.end());
 }
 
-bool hittable_list::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
-	hit_record temp_rec;
-	bool hit_anything = false;
+hit_record hittable_list::hit(const ray& r, double t_min, double t_max) const {
+	hit_record rec;
 	double closest_so_far = t_max;
 
 	for (const std::shared_ptr<hittable>& object : objects) {
-		if (object->hit(r, t_min, closest_so_far, temp_rec)) {
-			hit_anything = true;
-			closest_so_far = temp_rec.t;
-			rec = temp_rec;
+		hit_record hr = object->hit(r, t_min, closest_so_far);
+		if (hr.did_hit) {
+			closest_so_far = hr.hp.t;
+			rec = hr;
 		}
 	}
 
-	return hit_anything;
+	return rec;
 }
 
 bool hittable_list::bounding_box(aabb& output_box) const {

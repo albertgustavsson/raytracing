@@ -1,14 +1,15 @@
 #include "sphere.h"
 #include "utils.h"
 
-bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+hit_record sphere::hit(const ray& r, double t_min, double t_max) const {
+	hit_record hr;
 	vector3 oc = r.origin - center;
 	double a = r.direction.length_squared();
 	double half_b = dot(oc, r.direction);
 	double c = oc.length_squared() - radius * radius;
 	
 	double discriminant = half_b * half_b - a * c;
-	if (discriminant < 0) return false;
+	if (discriminant < 0) return hr;
 	
 	double sqrtd = sqrt(discriminant);
 
@@ -17,17 +18,17 @@ bool sphere::hit(const ray& r, double t_min, double t_max, hit_record& rec) cons
 	if (root < t_min || root > t_max) {
 		root = (-half_b + sqrtd) / a;
 		if (root < t_min || root > t_max)
-			return false;
+			return hr;
 	}
+	hr.did_hit = true;
 
-	rec.t = root;
-	rec.p = r.at(rec.t);
-	vector3 outward_normal = (rec.p - center) / radius;
-	rec.set_face_normal(r, outward_normal);
-	rec.mat_ptr = mat_ptr;
-	get_sphere_uv(outward_normal, rec.u, rec.v);
-
-	return true;
+	hr.hp.t = root;
+	hr.hp.p = r.at(hr.hp.t);
+	vector3 outward_normal = (hr.hp.p - center) / radius;
+	hr.hp.set_face_normal(r, outward_normal);
+	hr.mat_ptr = mat_ptr;
+	get_sphere_uv(outward_normal, hr.hp.u, hr.hp.v);
+	return hr;
 }
 
 bool sphere::bounding_box(aabb& output_box) const {

@@ -16,20 +16,19 @@ parallelepiped::parallelepiped(vector3 v0, vector3 d0, vector3 d1, vector3 d2,
 	}
 }
 
-bool parallelepiped::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
-	hit_record temp_rec;
-	bool hit_anything = false;
+hit_record parallelepiped::hit(const ray& r, double t_min, double t_max) const {
+	hit_record rec;
 	double closest_so_far = t_max;
 
 	for (int i = 0; i < 6; i++) {
-		if (sides[i].hit(r, t_min, closest_so_far, temp_rec)) {
-			hit_anything = true;
-			closest_so_far = temp_rec.t;
-			rec = temp_rec;
+		hit_record hr = sides[i].hit(r, t_min, closest_so_far);
+		if (hr.did_hit) {
+			closest_so_far = hr.hp.t;
+			rec = hr;
 		}
 	}
 
-	return hit_anything;
+	return rec;
 }
 
 bool parallelepiped::bounding_box(aabb& output_box) const {

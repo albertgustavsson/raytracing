@@ -45,14 +45,14 @@ bvh_node::bvh_node(
 }
 
 
-bool bvh_node::hit(const ray& r, double t_min, double t_max, hit_record& rec) const {
+hit_record bvh_node::hit(const ray& r, double t_min, double t_max) const {
+	hit_record hr;
 	if (!box.hit(r, t_min, t_max))
-		return false;
+		return hr;
 
-	bool hit_left = left->hit(r, t_min, t_max, rec);
-	bool hit_right = right->hit(r, t_min, hit_left ? rec.t : t_max, rec);
-
-	return hit_left || hit_right;
+	hit_record hr_left = left->hit(r, t_min, t_max);
+	hit_record hr_right = right->hit(r, t_min, hr_left.did_hit ? hr_left.hp.t : t_max);
+	return hr_right.did_hit ? hr_right : hr_left;
 }
 
 bool bvh_node::bounding_box(aabb& output_box) const {
