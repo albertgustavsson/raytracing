@@ -51,10 +51,6 @@ double dielectric::reflectance(double cosine, double ref_idx) {
     return r0 + (1 - r0) * pow((1 - cosine), 5);
 }
 
-bool diffuse_light::scatter(const ray& r_in, const hit_record& rec, rgb_color& attenuation, ray& scattered) const {
-    return false;
-}
-
 rgb_color diffuse_light::emitted(double u, double v, const vector3& p) const {
     return emit->value(u, v, p);
 }

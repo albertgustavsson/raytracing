@@ -47,11 +47,12 @@ public:
 };
 
 
-class diffuse_light : public material {
+class diffuse_light : public lambertian {
 public:
-    diffuse_light(std::shared_ptr<texture> a) : emit(a) {}
-    diffuse_light(rgb_color c) : emit(std::make_shared<solid_color>(c)) {}
-    virtual bool scatter(const ray& r_in, const hit_record& rec, rgb_color& attenuation, ray& scattered) const override;
+    diffuse_light(std::shared_ptr<texture> emissive, std::shared_ptr<texture> diffuse)
+        : lambertian(diffuse), emit(emissive) {}
+    diffuse_light(rgb_color emissive, rgb_color diffuse)
+        : diffuse_light(std::make_shared<solid_color>(emissive), std::make_shared<solid_color>(diffuse)) {}
     virtual rgb_color emitted(double u, double v, const vector3& p) const override;
 
 public:

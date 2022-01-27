@@ -109,7 +109,7 @@ scene random_scene_light() {
 	hittable_list hittables = random_spheres();
 	hittables.add(floor_triangles().objects);
 
-	std::shared_ptr<diffuse_light> light_material = std::make_shared<diffuse_light>(rgb_color(5));
+	std::shared_ptr<diffuse_light> light_material = std::make_shared<diffuse_light>(rgb_color(5), rgb_color(0));
 	hittables.add(std::make_shared<sphere>(vector3(20, 15, 25), 15, light_material));
 
 	return scene(hittables, random_scene_camera());
@@ -121,11 +121,12 @@ hittable_list cornell_box() {
 	rgb_color green_color(0.117, 0.4125, 0.11425);
 	rgb_color white_color(0.7295, 0.7355, 0.733);
 	rgb_color light_emissive_color = rgb_color(0, 255.0/255, 146.0/255) * 8.0 + rgb_color(255.0/255, 190.0/255, 0) * 15.6 + rgb_color(255.0/255, 0, 0) * 18.4;
+	rgb_color light_diffuse_color(0.78);
 
 	std::shared_ptr<lambertian> red = std::make_shared<lambertian>(red_color);
 	std::shared_ptr<lambertian> green = std::make_shared<lambertian>(green_color);
 	std::shared_ptr<lambertian> white = std::make_shared<lambertian>(white_color);
-	std::shared_ptr<diffuse_light> light = std::make_shared<diffuse_light>(light_emissive_color);
+	std::shared_ptr<diffuse_light> light = std::make_shared<diffuse_light>(light_emissive_color, light_diffuse_color);
 
 	vector3 box_corners[8] = {
 		{  0,     0,     0  },
