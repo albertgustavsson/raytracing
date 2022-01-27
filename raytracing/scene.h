@@ -14,7 +14,8 @@ public:
 	scene(const bvh_node& r, const camera& c) : scene(r, c, rgb_color(0)) {}
 	scene(const bvh_node& r, const camera& c, rgb_color bg) : objects(r), cam(c), background(bg) {}
 #else
-	scene(const hittable_list& h, const camera& c, rgb_color bg) : objects(h), cam(c), background(bg) {}
+	scene(const hittable_list& h, const camera& c, rgb_color bg)
+		: objects(h), cam(c), background(bg) {}
 #endif
 
 public:

@@ -3,32 +3,32 @@
 
 class vector3 {
 public:
-    vector3();
-    vector3(double x, double y, double z);
+	vector3();
+	vector3(double x, double y, double z);
 
-    inline static vector3 random();
-    inline static vector3 random(double min, double max);
-    static vector3 random_in_unit_sphere();
-    static vector3 random_in_unit_disk();
-    static vector3 random_unit_vector();
-    static vector3 random_in_hemisphere(const vector3& normal);
+	inline static vector3 random();
+	inline static vector3 random(double min, double max);
+	static vector3 random_in_unit_sphere();
+	static vector3 random_in_unit_disk();
+	static vector3 random_unit_vector();
+	static vector3 random_in_hemisphere(const vector3& normal);
 
-    double operator[](unsigned int i) const { return (i == 0 ? x : (i == 1 ? y : z)); }
-    double& operator[](unsigned int i) { return (i == 0 ? x : (i == 1 ? y : z)); }
-    vector3 operator-() const;
-    vector3& operator+=(const vector3& v);
-    vector3& operator-=(const vector3& v);
-    vector3& operator*=(const double t);
-    vector3& operator/=(const double t);
+	double operator[](unsigned int i) const { return (i == 0 ? x : (i == 1 ? y : z)); }
+	double& operator[](unsigned int i) { return (i == 0 ? x : (i == 1 ? y : z)); }
+	vector3 operator-() const;
+	vector3& operator+=(const vector3& v);
+	vector3& operator-=(const vector3& v);
+	vector3& operator*=(const double t);
+	vector3& operator/=(const double t);
 
-    vector3 get_normalized() const;
-    void normalize();
-    double length() const;
-    double length_squared() const;
-    bool near_zero() const;
+	vector3 get_normalized() const;
+	void normalize();
+	double length() const;
+	double length_squared() const;
+	bool near_zero() const;
 
 public:
-    double x, y, z;
+	double x, y, z;
 };
 
 std::ostream& operator<<(std::ostream& out, const vector3& v);

@@ -1,6 +1,7 @@
 #include "parallelepiped.h"
 
-parallelepiped::parallelepiped(vector3 v0, vector3 d0, vector3 d1, vector3 d2, std::shared_ptr<material> m) : sides{
+parallelepiped::parallelepiped(vector3 v0, vector3 d0, vector3 d1, vector3 d2,
+	std::shared_ptr<material> m) : sides{
 		{v0     , v0 + d0     , v0 + d0 + d1     , v0 + d1     , m},
 		{v0     , v0 + d0     , v0 + d0 + d2     , v0 + d2     , m},
 		{v0     , v0 + d1     , v0 + d1 + d2     , v0 + d2     , m},

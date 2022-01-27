@@ -36,7 +36,8 @@ struct timer {
 
 	~timer() {
 		end = std::chrono::high_resolution_clock::now();
-		std::chrono::milliseconds duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+		std::chrono::milliseconds duration =
+			std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 		std::cout << name << " took " << duration.count() / 1000.0 << " seconds" << std::endl;
 	}
 };

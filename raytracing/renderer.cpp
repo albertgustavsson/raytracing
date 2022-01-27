@@ -7,7 +7,8 @@
 #include "materials.h"
 #include "scene.h"
 
-rgb_color ray_color(const ray& r, const rgb_color& background, const hittable& h, unsigned int depth) {
+rgb_color ray_color(
+		const ray& r, const rgb_color& background, const hittable& h, unsigned int depth) {
 	// If we've exceeded the ray bounce limit, no more light is gathered.
 	if (depth <= 0)
 		return rgb_color(0);
@@ -53,8 +54,10 @@ image render_image(const scene& sc, const render_config& conf) {
 
 	std::vector<std::future<void>> future_vector;
 	volatile std::atomic<unsigned int> block_counter(0);
-	const unsigned int n_x_blocks = img.width / conf.block_width + (img.width % conf.block_width != 0);
-	const unsigned int n_y_blocks = img.height / conf.block_height + (img.height % conf.block_height != 0);
+	const unsigned int n_x_blocks =
+		img.width / conf.block_width + (img.width % conf.block_width != 0);
+	const unsigned int n_y_blocks =
+		img.height / conf.block_height + (img.height % conf.block_height != 0);
 	const unsigned int n_blocks = n_x_blocks * n_y_blocks;
 
 	for (unsigned int thread = 0; thread < conf.n_threads; thread++) {

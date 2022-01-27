@@ -19,7 +19,8 @@ struct block_config {
 	unsigned int x_start, x_end, y_start, y_end;
 };
 
-rgb_color ray_color(const ray& r, const rgb_color& background, const hittable& h, unsigned int depth);
+rgb_color ray_color(
+	const ray& r, const rgb_color& background, const hittable& h, unsigned int depth);
 
 void render_area(image& img, const scene& sc,
 	const render_config& rc, const block_config& bc);

@@ -100,8 +100,10 @@ scene random_scene_triangles() {
 scene random_scene_checker() {
 	hittable_list hittables = random_spheres();
 
-	std::shared_ptr<checker_texture> checker = std::make_shared<checker_texture>(rgb_color(0.2, 0.3, 0.1), rgb_color(0.9));
-	hittables.add(std::make_shared<sphere>(vector3(0, -1000, 0), 1000, std::make_shared<lambertian>(checker)));
+	std::shared_ptr<checker_texture> checker =
+		std::make_shared<checker_texture>(rgb_color(0.2, 0.3, 0.1), rgb_color(0.9));
+	hittables.add(std::make_shared<sphere>(
+		vector3(0, -1000, 0), 1000, std::make_shared<lambertian>(checker)));
 
 	return scene(hittables, random_scene_camera(), rgb_color(0.75, 0.85, 1.00));
 }
@@ -110,7 +112,8 @@ scene random_scene_light() {
 	hittable_list hittables = random_spheres();
 	hittables.add(floor_triangles().objects);
 
-	std::shared_ptr<diffuse_light> light_material = std::make_shared<diffuse_light>(rgb_color(5), rgb_color(0));
+	std::shared_ptr<diffuse_light> light_material =
+		std::make_shared<diffuse_light>(rgb_color(5), rgb_color(0));
 	hittables.add(std::make_shared<sphere>(vector3(20, 15, 25), 15, light_material));
 
 	return scene(hittables, random_scene_camera());
@@ -121,13 +124,17 @@ hittable_list cornell_box() {
 	rgb_color red_color(0.611, 0.0555, 0.06175);
 	rgb_color green_color(0.117, 0.4125, 0.11425);
 	rgb_color white_color(0.7295, 0.7355, 0.733);
-	rgb_color light_emissive_color = rgb_color(0, 255.0/255, 146.0/255) * 8.0 + rgb_color(255.0/255, 190.0/255, 0) * 15.6 + rgb_color(255.0/255, 0, 0) * 18.4;
+	rgb_color light_emissive_color =
+		rgb_color(0, 255.0/255, 146.0/255) * 8.0 +
+		rgb_color(255.0/255, 190.0/255, 0) * 15.6 +
+		rgb_color(255.0/255, 0, 0) * 18.4;
 	rgb_color light_diffuse_color(0.78);
 
 	std::shared_ptr<lambertian> red = std::make_shared<lambertian>(red_color);
 	std::shared_ptr<lambertian> green = std::make_shared<lambertian>(green_color);
 	std::shared_ptr<lambertian> white = std::make_shared<lambertian>(white_color);
-	std::shared_ptr<diffuse_light> light = std::make_shared<diffuse_light>(light_emissive_color, light_diffuse_color);
+	std::shared_ptr<diffuse_light> light =
+		std::make_shared<diffuse_light>(light_emissive_color, light_diffuse_color);
 
 	vector3 box_corners[8] = {
 		{  0,     0,     0  },
@@ -150,27 +157,28 @@ hittable_list cornell_box() {
 	hittable_list hittables;
 	
 	// Back wall
-	hittables.add(std::make_shared<quadrilateral>(box_corners[4], box_corners[5], box_corners[7], box_corners[6], white));
+	hittables.add(std::make_shared<quadrilateral>(
+		box_corners[4], box_corners[5], box_corners[7], box_corners[6], white));
 	// Floor
-	hittables.add(std::make_shared<quadrilateral>(box_corners[0], box_corners[1], box_corners[5], box_corners[4], white));
+	hittables.add(std::make_shared<quadrilateral>(
+		box_corners[0], box_corners[1], box_corners[5], box_corners[4], white));
 	// Ceiling
-	hittables.add(std::make_shared<quadrilateral>(box_corners[2], box_corners[3], box_corners[7], box_corners[6], white));
+	hittables.add(std::make_shared<quadrilateral>(
+		box_corners[2], box_corners[3], box_corners[7], box_corners[6], white));
 	// Left wall
-	hittables.add(std::make_shared<quadrilateral>(box_corners[1], box_corners[3], box_corners[7], box_corners[5], red));
+	hittables.add(std::make_shared<quadrilateral>(
+		box_corners[1], box_corners[3], box_corners[7], box_corners[5], red));
 	// Right wall
-	hittables.add(std::make_shared<quadrilateral>(box_corners[0], box_corners[2], box_corners[6], box_corners[4], green));
+	hittables.add(std::make_shared<quadrilateral>(
+		box_corners[0], box_corners[2], box_corners[6], box_corners[4], green));
 	// Light
-	hittables.add(std::make_shared<quadrilateral>(light_corners[0], light_corners[1], light_corners[3], light_corners[2], light));
+	hittables.add(std::make_shared<quadrilateral>(
+		light_corners[0], light_corners[1], light_corners[3], light_corners[2], light));
 
 	return hittables;
 }
 
 hittable_list cornell_blocks() {
-	rgb_color white_color(0.7295, 0.7355, 0.733);
-	std::shared_ptr<lambertian> white = std::make_shared<lambertian>(white_color);
-
-	hittable_list hittables;
-
 	// Corners for the short block
 	//	{130,   0,  65}
 	//	{290,   0, 114}
@@ -180,7 +188,7 @@ hittable_list cornell_blocks() {
 	//	{240,   0, 272}
 	//	{ 82, 165, 225}
 	//	{240, 165, 272}
-
+	
 	// Corners for the tall block
 	//	{265,   0, 296}
 	//	{423,   0, 247}
@@ -190,10 +198,18 @@ hittable_list cornell_blocks() {
 	//	{472,   0, 406}
 	//	{314, 330, 456}
 	//	{472, 330, 406}
+	
+	hittable_list hittables;
 
-	// Doesn't match the blocks defined by Cornell perfectly, since they do not seem to have parallel sides
-	hittables.add(std::make_shared<parallelepiped>(vector3(130, 0, 65), vector3(160, 0, 49), vector3(0, 165, 0), vector3(-48, 0, 160), white));
-	hittables.add(std::make_shared<parallelepiped>(vector3(265, 0, 296), vector3(158, 0, -49), vector3(0, 330, 0), vector3(49, 0, 160), white));
+	rgb_color white_color(0.7295, 0.7355, 0.733);
+	std::shared_ptr<lambertian> white = std::make_shared<lambertian>(white_color);
+
+	// Doesn't match the blocks defined by Cornell perfectly,
+	// since they do not seem to have parallel sides
+	hittables.add(std::make_shared<parallelepiped>(vector3(130, 0, 65), 
+		vector3(160, 0, 49), vector3(0, 165, 0), vector3(-48, 0, 160), white));
+	hittables.add(std::make_shared<parallelepiped>(vector3(265, 0, 296),
+		vector3(158, 0, -49), vector3(0, 330, 0), vector3(49, 0, 160), white));
 	
 	return hittables;
 }
