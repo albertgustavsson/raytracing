@@ -147,6 +147,7 @@
     <ClCompile Include="hittable_list.cpp" />
     <ClCompile Include="image.cpp" />
     <ClCompile Include="materials.cpp" />
+    <ClCompile Include="parallelepiped.cpp" />
     <ClCompile Include="quadrilateral.cpp" />
     <ClCompile Include="ray.cpp" />
     <ClCompile Include="raytracing.cpp" />
@@ -163,6 +164,7 @@
     <ClInclude Include="bvh_node.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="materials.h" />
+    <ClInclude Include="parallelepiped.h" />
     <ClInclude Include="quadrilateral.h" />
     <ClInclude Include="renderer.h" />
     <ClInclude Include="scene.h" />

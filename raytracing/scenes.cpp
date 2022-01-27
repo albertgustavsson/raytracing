@@ -8,6 +8,7 @@
 #include "camera.h"
 #include "scene.h"
 #include "quadrilateral.h"
+#include "parallelepiped.h"
 
 camera random_scene_camera() {
 	vector3 lookfrom(13, 2, 3);
@@ -170,39 +171,29 @@ hittable_list cornell_blocks() {
 
 	hittable_list hittables;
 
-	vector3 short_block_corners[8] = {
-		{130,   0,  65},
-		{290,   0, 114},
-		{130, 165,  65},
-		{290, 165, 114},
-		{ 82,   0, 225},
-		{240,   0, 272},
-		{ 82, 165, 225},
-		{240, 165, 272},
-	};
-	
-	hittables.add(std::make_shared<quadrilateral>(short_block_corners[0], short_block_corners[1], short_block_corners[3], short_block_corners[2], white));
-	hittables.add(std::make_shared<quadrilateral>(short_block_corners[0], short_block_corners[2], short_block_corners[6], short_block_corners[4], white));
-	hittables.add(std::make_shared<quadrilateral>(short_block_corners[1], short_block_corners[3], short_block_corners[7], short_block_corners[5], white));
-	hittables.add(std::make_shared<quadrilateral>(short_block_corners[2], short_block_corners[3], short_block_corners[7], short_block_corners[6], white));
-	hittables.add(std::make_shared<quadrilateral>(short_block_corners[4], short_block_corners[5], short_block_corners[7], short_block_corners[6], white));
+	// Corners for the short block
+	//	{130,   0,  65}
+	//	{290,   0, 114}
+	//	{130, 165,  65}
+	//	{290, 165, 114}
+	//	{ 82,   0, 225}
+	//	{240,   0, 272}
+	//	{ 82, 165, 225}
+	//	{240, 165, 272}
 
-	vector3 tall_block_corners[8] = {
-		{265,   0, 296},
-		{423,   0, 247},
-		{265, 330, 296},
-		{423, 330, 247},
-		{314,   0, 456},
-		{472,   0, 406},
-		{314, 330, 456},
-		{472, 330, 406},
-	};
+	// Corners for the tall block
+	//	{265,   0, 296}
+	//	{423,   0, 247}
+	//	{265, 330, 296}
+	//	{423, 330, 247}
+	//	{314,   0, 456}
+	//	{472,   0, 406}
+	//	{314, 330, 456}
+	//	{472, 330, 406}
 
-	hittables.add(std::make_shared<quadrilateral>(tall_block_corners[0], tall_block_corners[1], tall_block_corners[3], tall_block_corners[2], white));
-	hittables.add(std::make_shared<quadrilateral>(tall_block_corners[0], tall_block_corners[2], tall_block_corners[6], tall_block_corners[4], white));
-	hittables.add(std::make_shared<quadrilateral>(tall_block_corners[1], tall_block_corners[3], tall_block_corners[7], tall_block_corners[5], white));
-	hittables.add(std::make_shared<quadrilateral>(tall_block_corners[2], tall_block_corners[3], tall_block_corners[7], tall_block_corners[6], white));
-	hittables.add(std::make_shared<quadrilateral>(tall_block_corners[4], tall_block_corners[5], tall_block_corners[7], tall_block_corners[6], white));
+	// Doesn't match the blocks defined by Cornell perfectly, since they do not seem to have parallel sides
+	hittables.add(std::make_shared<parallelepiped>(vector3(130, 0, 65), vector3(160, 0, 49), vector3(0, 165, 0), vector3(-48, 0, 160), white));
+	hittables.add(std::make_shared<parallelepiped>(vector3(265, 0, 296), vector3(158, 0, -49), vector3(0, 330, 0), vector3(49, 0, 160), white));
 	
 	return hittables;
 }
