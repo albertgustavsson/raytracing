@@ -22,4 +22,4 @@ Below, the background was set to black and an emissive sphere was added as a lig
 <img src="images/1k2-500spp-ap0_01-lights.png" alt="Emissive sphere as light source" width="60%"/>
 
 Here is an image depicting the Cornell box:  
-<img src="images/600-500spp-cornell_box.png" alt="Cornell box" width="50%"/>
+<img src="images/cornell-box-512x512-10000spp.png" alt="Cornell box" width="50%"/>
