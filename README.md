@@ -23,3 +23,7 @@ Below, the background was set to black and an emissive sphere was added as a lig
 
 Here is an image depicting the Cornell box:  
 <img src="images/cornell-box-512x512-10000spp.png" alt="Cornell box" width="50%"/>
+
+### Block render time
+This is a plot of the render time of each block, showing that the slowest blocks are the ones in the narrow areas between spheres and the floor plane. This is sensible, since the acute angle would cause a lot of ray bounces.  
+<img src="images/block-render-times.png" alt="Block render times" width="50%"/>

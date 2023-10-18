@@ -1,6 +1,7 @@
 #include <thread>
 #include <future>
 #include <iomanip>
+#include <fstream>
 #include "renderer.h"
 #include "hittable.h"
 #include "utils.h"
@@ -49,6 +50,11 @@ void render_area(image& img, const scene& sc,
 image render_image(const scene& sc, const render_config& conf) {
 	image img(conf.image_width, conf.image_height);
 
+	std::ofstream statsFile;
+	statsFile.open("stats.csv");
+	statsFile << "block_id,block_x,block_y,render_time\n";
+	std::mutex statsFileWriterMutex;
+
 	timer t("Rendering image");
 	std::cout << "Rendering " << img.width << "x" << img.height << " image" << std::endl;
 
@@ -61,7 +67,7 @@ image render_image(const scene& sc, const render_config& conf) {
 	const unsigned int n_blocks = n_x_blocks * n_y_blocks;
 
 	for (unsigned int thread = 0; thread < conf.n_threads; thread++) {
-		future_vector.emplace_back(std::async([=, &block_counter, &img, &sc, &conf]() {
+		future_vector.emplace_back(std::async([=, &block_counter, &img, &sc, &conf, &statsFile, &statsFileWriterMutex]() {
 			while (true) {
 				unsigned int block = block_counter++;
 				if (block >= n_blocks)
@@ -78,7 +84,15 @@ image render_image(const scene& sc, const render_config& conf) {
 					.y_start = y_start,
 					.y_end = y_end};
 
+				std::chrono::high_resolution_clock::time_point start = std::chrono::high_resolution_clock::now();
 				render_area(img, sc, conf, bc);
+				std::chrono::high_resolution_clock::time_point end = std::chrono::high_resolution_clock::now();
+				std::chrono::microseconds duration =
+					std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+				{
+					std::lock_guard<std::mutex> lock(statsFileWriterMutex);
+					statsFile << block << ',' << x_block << ',' << y_block << ',' << duration.count() << '\n';
+				}
 			}
 		}));
 	}
@@ -103,6 +117,6 @@ image render_image(const scene& sc, const render_config& conf) {
 
 	for (unsigned int thread = 0; thread < conf.n_threads; thread++) future_vector[thread].wait();
 	progress_future.wait();
-
+	statsFile.close();
 	return img;
 }

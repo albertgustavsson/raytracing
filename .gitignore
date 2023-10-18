@@ -351,3 +351,4 @@ MigrationBackup/
 
 # Image output
 *.ppm
+*.csv

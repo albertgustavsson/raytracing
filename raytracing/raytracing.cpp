@@ -5,16 +5,16 @@
 #include "scenes.h"
 
 int main() {
-	scene sc = cornell_box_scene();
+	scene sc = random_scene_light();
 
-	unsigned int image_width = 512;
+	unsigned int image_width = 1920;
 	unsigned int image_height = (unsigned int)((double)image_width / sc.cam.ar);
 	
 	render_config conf = {
 		.image_width = image_width,
 		.image_height = image_height,
-		.block_width = 32,
-		.block_height = 32,
+		.block_width = 8,
+		.block_height = 8,
 		.samples_per_pixel = 100,
 		.n_threads = std::thread::hardware_concurrency(),
 		.max_depth = 50,
